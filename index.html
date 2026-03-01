@@ -17,17 +17,17 @@
         .header { background: #0f172a; padding: 10px 15px; border-bottom: 2px solid #38bdf8; display: flex; justify-content: space-between; align-items: center; }
         .money { font-size: 1.8rem; color: #fbbf24; font-weight: bold; }
         
-        .boss-area { height: 30vh; display: flex; flex-direction: column; justify-content: center; align-items: center; position: relative; background: radial-gradient(circle, #1e293b 0%, #020617 100%); }
-        .boss-icon { font-size: 6rem; filter: drop-shadow(0 0 15px #f43f5e); transition: transform 0.05s; }
+        .boss-area { height: 28vh; display: flex; flex-direction: column; justify-content: center; align-items: center; position: relative; background: radial-gradient(circle, #1e293b 0%, #020617 100%); }
+        .boss-icon { font-size: 5.5rem; filter: drop-shadow(0 0 15px #f43f5e); transition: transform 0.05s; }
         .hp-box { width: 85%; height: 14px; background: #300; border: 1px solid #fff; border-radius: 50px; overflow: hidden; margin-top: 10px; }
         .hp-bar { height: 100%; background: #f43f5e; width: 100%; transition: width 0.1s; }
 
-        .upgrade-container { height: 60vh; background: #0f172a; border-top: 2px solid #334155; display: flex; flex-direction: column; }
-        .tab-menu { display: flex; background: #1e293b; }
-        .tab { flex: 1; padding: 15px; text-align: center; cursor: pointer; color: #94a3b8; font-size: 0.9rem; }
+        .upgrade-container { height: 62vh; background: #0f172a; border-top: 2px solid #334155; display: flex; flex-direction: column; }
+        .tab-menu { display: flex; background: #1e293b; overflow-x: auto; }
+        .tab { flex: 1; padding: 12px 5px; text-align: center; cursor: pointer; color: #94a3b8; font-size: 0.85rem; white-space: nowrap; }
         .tab.active { color: #38bdf8; border-bottom: 3px solid #38bdf8; background: #0f172a; font-weight: bold; }
         
-        .upgrade-list { flex-grow: 1; overflow-y: auto; padding: 15px; display: none; padding-bottom: 80px; }
+        .upgrade-list { flex-grow: 1; overflow-y: auto; padding: 15px; display: none; padding-bottom: 50px; }
         .upgrade-list.active { display: block; }
         .up-card { background: #1e293b; padding: 12px; border-radius: 12px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #334155; }
         .up-info b { color: #38bdf8; font-size: 1rem; display: block; }
@@ -35,6 +35,8 @@
         .btn-up { background: #fbbf24; color: #000; border: none; padding: 10px; border-radius: 8px; font-weight: bold; cursor: pointer; min-width: 90px; }
         .btn-up:disabled { background: #444; color: #888; opacity: 0.5; }
 
+        .info-box { background: #1e293b; padding: 15px; border-radius: 12px; line-height: 1.6; color: #cbd5e1; }
+        .info-box h3 { color: #fbbf24; margin-top: 0; }
         .dmg-text { position: absolute; font-weight: 900; pointer-events: none; z-index: 100; text-shadow: 2px 2px 0 #000; opacity: 0; }
         @keyframes floatOut { 0% { transform: translate(-50%, -50%) scale(1); opacity: 1; } 100% { transform: translate(-50%, -150%) scale(1.3); opacity: 0; } }
     </style>
@@ -43,8 +45,8 @@
 
     <div id="start-screen">
         <h1 style="color:#fbbf24;">MONSTER CLICKER</h1>
-        <p style="color:#94a3b8;">Captain Edition v2.2</p>
-        <button class="start-btn" onclick="startGame()">▶ เข้าสู่การผจญภัย</button>
+        <p style="color:#94a3b8;">Captain Edition v2.3</p>
+        <button class="start-btn" onclick="startGame()">▶ เริ่มผจญภัย</button>
     </div>
 
     <div class="header">
@@ -65,32 +67,53 @@
             <div class="tab active" onclick="switchTab(this, 'atk-tab')">⚔️ พลัง</div>
             <div class="tab" onclick="switchTab(this, 'gold-tab')">💰 เงิน</div>
             <div class="tab" onclick="switchTab(this, 'rb-tab')">🌀 จุติ</div>
+            <div class="tab" onclick="switchTab(this, 'help-tab')">📖 วิธีเล่น/ติดต่อ</div>
         </div>
 
         <div id="atk-tab" class="upgrade-list active">
-            <div class="up-card"><div class="up-info"><b>คมดาบไม้</b><span>ดาเมจ +15</span></div><button class="btn-up" onclick="buy('atk', 15, 50)">💰 50</button></div>
-            <div class="up-card"><div class="up-info"><b>นัยน์ตาปีศาจ</b><span>คริติคอล +5%</span></div><button class="btn-up" onclick="buy('crit', 5, 200)">💰 200</button></div>
-            <div class="up-card"><div class="up-info"><b>ถุงมือเหล็ก</b><span>ดาเมจกด x2</span></div><button class="btn-up" onclick="buy('tap', 1, 1000)">💰 1,000</button></div>
+            <div class="up-card"><div class="up-info"><b id="name-atk">คมดาบไม้ (Lv.0)</b><span>ดาเมจ +15</span></div><button class="btn-up" onclick="buy('atk', 15, 50)">💰 50</button></div>
+            <div class="up-card"><div class="up-info"><b id="name-crit">นัยน์ตาปีศาจ (Lv.0)</b><span>คริติคอล +5%</span></div><button class="btn-up" onclick="buy('crit', 5, 200)">💰 200</button></div>
+            <div class="up-card"><div class="up-info"><b id="name-tap">ถุงมือเหล็ก (Lv.0)</b><span>ดาเมจกด x2</span></div><button class="btn-up" onclick="buy('tap', 1, 1000)">💰 1,000</button></div>
         </div>
 
         <div id="gold-tab" class="upgrade-list">
-            <div class="up-card"><div class="up-info"><b>กระเป๋าผ้า</b><span>เงิน x1.2</span></div><button class="btn-up" onclick="buy('gold', 0.2, 100)">💰 100</button></div>
+            <div class="up-card"><div class="up-info"><b id="name-gold">กระเป๋าผ้า (Lv.0)</b><span>เงิน x1.2</span></div><button class="btn-up" onclick="buy('gold', 0.2, 100)">💰 100</button></div>
         </div>
 
         <div id="rb-tab" class="upgrade-list">
             <div style="background: linear-gradient(45deg, #1e293b, #4c1d95); padding: 20px; border-radius: 15px; text-align: center;">
                 <h2 style="margin:0; color:#fbbf24;">🌀 ระบบจุติ</h2>
+                <p>เมื่อจุติ พลังจะเพิ่มขึ้นมหาศาล แต่เงินและเลเวลบอสจะเริ่มใหม่</p>
                 <div id="rb-status" style="margin:15px 0; font-weight:bold;">ต้องการเงิน: 100,000</div>
                 <button id="rb-btn" class="btn-up" onclick="doRebirth()" style="width:100%; height:50px;">จุติใหม่!</button>
+            </div>
+        </div>
+
+        <div id="help-tab" class="upgrade-list">
+            <div class="info-box">
+                <h3>📖 วิธีเล่น</h3>
+                <ul>
+                    <li><b>คลิกที่มอนสเตอร์:</b> เพื่อทำดาเมจและสะสมเงิน</li>
+                    <li><b>อัปเกรด:</b> ใช้เงินเพิ่มพลังโจมตีและโบนัสเงิน</li>
+                    <li><b>บอส:</b> เมื่อ HP บอสหมด เลเวลบอสจะเพิ่มขึ้นและโหดขึ้น</li>
+                    <li><b>จุติ:</b> เมื่อมีเงินถึงกำหนด สามารถจุติเพื่อรับโบนัสพลังถาวร</li>
+                </ul>
+                <hr style="border:0; border-top:1px solid #334155; margin:15px 0;">
+                <h3>📧 ติดต่อเรา</h3>
+                <p>พบปัญหาหรือมีข้อเสนอแนะ ติดต่อกัปตันได้ที่:</p>
+                <p style="color:#38bdf8;"><i class="fab fa-github"></i> GitHub: supanat254135-ctrl</p>
             </div>
         </div>
     </div>
 
 <script>
-    let g = { money: 0, atk: 10, crit: 0, goldMult: 1.0, tapMult: 1, rPoints: 0, bossLv: 1, maxHP: 100, currentHP: 100 };
-    const SAVE_KEY = 'captain_monster_v2.2';
+    // เพิ่มการบันทึกเลเวลอัปเกรด (Levels) เพื่อไม่ให้หาย
+    let g = { 
+        money: 0, atk: 10, crit: 0, goldMult: 1.0, tapMult: 1, rPoints: 0, bossLv: 1, maxHP: 100, currentHP: 100,
+        lvAtk: 0, lvCrit: 0, lvTap: 0, lvGold: 0 
+    };
+    const SAVE_KEY = 'monster_clicker_captain_v2.3'; // เปลี่ยน Key เพื่อความเสถียร
 
-    // เสียง
     const hitSfx = new Audio('https://www.soundjay.com/buttons/sounds/button-37.mp3');
     hitSfx.volume = 0.2;
 
@@ -101,7 +124,8 @@
     function load() {
         const data = localStorage.getItem(SAVE_KEY);
         if (data) {
-            g = JSON.parse(data);
+            const parsed = JSON.parse(data);
+            g = {...g, ...parsed}; // ผสานข้อมูลเก่ากับโครงสร้างใหม่
             updateUI();
         }
     }
@@ -126,23 +150,28 @@
             g.bossLv++; g.maxHP = g.bossLv * 150; g.currentHP = g.maxHP;
         }
         updateUI();
+        save();
     }
 
     function buy(type, val, cost) {
         if (g.money >= cost) {
             g.money -= cost;
-            if(type === 'atk') g.atk += val;
-            if(type === 'gold') g.goldMult += val;
+            if(type === 'atk') { g.atk += val; g.lvAtk++; }
+            if(type === 'crit') { g.crit += val; g.lvCrit++; }
+            if(type === 'tap') { g.tapMult *= 2; g.lvTap++; }
+            if(type === 'gold') { g.goldMult += val; g.lvGold++; }
             updateUI();
-            save(); // เซฟทันทีที่ซื้อของ
+            save();
         }
     }
 
     function doRebirth() {
         if (g.money >= 100000) {
             g.rPoints++; g.money = 0; g.bossLv = 1; g.maxHP = 100; g.currentHP = 100;
+            // รีเซ็ตอัปเกรดบางส่วนตามสไตล์เกม Rebirth
+            g.atk = 10; g.lvAtk = 0; g.lvCrit = 0; g.lvTap = 0; g.lvGold = 0; g.goldMult = 1.0; g.tapMult = 1;
             updateUI(); save();
-            alert("🌀 จุติสำเร็จ! พลังเพิ่มขึ้นมหาศาล!");
+            alert("🌀 จุติสำเร็จ! พลังพื้นฐานของคุณเพิ่มขึ้น x2 เท่า!");
         }
     }
 
@@ -153,6 +182,12 @@
         document.getElementById('hp-bar').style.width = (g.currentHP / g.maxHP * 100) + "%";
         document.getElementById('hp-text').innerText = `HP: ${Math.floor(g.currentHP)} / ${g.maxHP}`;
         
+        // อัปเดตชื่อและเลเวล
+        document.getElementById('name-atk').innerText = `คมดาบไม้ (Lv.${g.lvAtk})`;
+        document.getElementById('name-crit').innerText = `นัยน์ตาปีศาจ (Lv.${g.lvCrit})`;
+        document.getElementById('name-tap').innerText = `ถุงมือเหล็ก (Lv.${g.lvTap})`;
+        document.getElementById('name-gold').innerText = `กระเป๋าผ้า (Lv.${g.lvGold})`;
+
         document.querySelectorAll('.btn-up').forEach(btn => {
             let costText = btn.innerText.replace('💰 ', '').replace(/,/g, '');
             if (!isNaN(parseInt(costText))) btn.disabled = (g.money < parseInt(costText));

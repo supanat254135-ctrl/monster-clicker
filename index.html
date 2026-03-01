@@ -4,201 +4,82 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Monster Clicker - Captain Edition</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;700&display=swap" rel="stylesheet">
     <style>
         * { touch-action: manipulation; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body { margin: 0; background: #0b0f19; font-family: 'Kanit', sans-serif; color: #fff; overflow: hidden; user-select: none; }
-        
-        /* Header */
-        .header { padding: 15px; border-bottom: 1px solid #1e293b; display: flex; align-items: center; justify-content: space-between; }
-        .money-val { font-size: 2rem; font-weight: bold; color: #fbbf24; display: flex; align-items: center; gap: 8px; }
-        .money-val img { width: 30px; }
-
-        /* Boss Area */
-        .boss-area { height: 35vh; display: flex; flex-direction: column; justify-content: center; align-items: center; position: relative; }
-        .boss-icon { font-size: 6.5rem; filter: drop-shadow(0 0 25px #f43f5e); transition: transform 0.05s; z-index: 1; }
-        .hp-container { width: 90%; height: 16px; background: #1a1a1a; border: 1px solid #334155; border-radius: 50px; margin-top: 20px; position: relative; overflow: hidden; }
-        .hp-bar { height: 100%; background: linear-gradient(90deg, #f43f5e, #fb7185); width: 100%; transition: width 0.1s; }
-        .hp-text { position: absolute; width: 100%; text-align: center; font-size: 0.7rem; line-height: 16px; font-weight: bold; color: #fff; text-shadow: 1px 1px 2px #000; }
-
-        /* Menu System */
-        .menu-container { height: 50vh; background: #111827; border-top: 2px solid #1e293b; display: flex; flex-direction: column; }
-        .tabs { display: flex; background: #1f2937; }
-        .tab { flex: 1; padding: 15px; text-align: center; cursor: pointer; color: #94a3b8; border-bottom: 3px solid transparent; transition: 0.3s; font-size: 0.9rem; }
-        .tab.active { color: #38bdf8; border-bottom-color: #38bdf8; background: #111827; }
-
-        .content-list { flex-grow: 1; overflow-y: auto; padding: 15px; display: none; padding-bottom: 80px; }
-        .content-list.active { display: block; }
-
-        /* Upgrade Cards */
-        .card { background: #1e293b; padding: 15px; border-radius: 12px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #334155; }
-        .card-info b { font-size: 1.1rem; display: block; color: #fff; }
-        .card-info span { font-size: 0.85rem; color: #94a3b8; }
-        .btn-buy { background: #fbbf24; color: #000; border: none; padding: 10px 25px; border-radius: 8px; font-weight: bold; font-size: 1rem; box-shadow: 0 4px 0 #b45309; transition: 0.1s; }
-        .btn-buy:active { transform: translateY(3px); box-shadow: 0 1px 0 #b45309; }
-        .btn-buy:disabled { background: #4b5563; color: #9ca3af; box-shadow: none; opacity: 0.6; }
-
-        /* Rebirth - ปุ่มทองยาว */
-        .rb-panel { text-align: center; padding: 20px; }
-        .btn-rb { background: #fbbf24; color: #000; border: none; width: 100%; padding: 18px; border-radius: 12px; font-weight: 800; font-size: 1.2rem; box-shadow: 0 5px 0 #b45309; margin-top: 20px; }
-        .btn-rb:disabled { background: #374151; color: #6b7280; box-shadow: none; }
-
-        /* Contact & How to Play */
-        .info-box { background: #1e293b; padding: 20px; border-radius: 15px; border: 1px dashed #38bdf8; line-height: 1.6; }
-        
-        .dmg-popup { position: absolute; font-weight: 900; pointer-events: none; color: #fff; text-shadow: 2px 2px 0 #000; animation: floatUp 0.5s ease-out forwards; z-index: 100; }
-        @keyframes floatUp { 0% { transform: translate(-50%, -50%) scale(1); opacity: 1; } 100% { transform: translate(-50%, -250%) scale(1.6); opacity: 0; } }
+        body { margin: 0; background: #0b1120; font-family: 'Kanit', sans-serif; color: #fff; overflow: hidden; }
+        .header { padding: 15px; border-bottom: 1px solid #1e293b; display: flex; justify-content: space-between; }
+        .money { color: #fbbf24; font-size: 2rem; font-weight: bold; display: flex; align-items: center; gap: 8px; }
+        .boss-area { height: 35vh; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+        .boss-icon { font-size: 6rem; filter: drop-shadow(0 0 20px #f43f5e); }
+        .hp-box { width: 85%; height: 14px; background: #300; border-radius: 50px; margin-top: 15px; position: relative; overflow: hidden; border: 1px solid #444; }
+        .hp-bar { height: 100%; background: #f43f5e; width: 100%; transition: width 0.1s; }
+        .menu-container { height: 50vh; background: #0f172a; border-top: 2px solid #1e293b; }
+        .tabs { display: flex; background: #1e293b; }
+        .tab { flex: 1; padding: 15px; text-align: center; color: #94a3b8; cursor: pointer; }
+        .tab.active { color: #38bdf8; border-bottom: 3px solid #38bdf8; background: #0f172a; }
+        .list { padding: 15px; overflow-y: auto; height: 100%; display: none; }
+        .list.active { display: block; }
+        .card { background: #1e293b; padding: 12px; border-radius: 10px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
+        .btn-gold { background: #fbbf24; color: #000; border: none; padding: 8px 20px; border-radius: 6px; font-weight: bold; min-width: 80px; }
+        .btn-long { background: #fbbf24; color: #000; border: none; width: 100%; padding: 15px; border-radius: 8px; font-weight: bold; font-size: 1.1rem; margin-top: 20px; }
+        .dmg { position: absolute; font-weight: bold; color: #fff; animation: out 0.5s forwards; pointer-events: none; }
+        @keyframes out { 0% { transform: translateY(0); opacity: 1; } 100% { transform: translateY(-100px); opacity: 0; } }
     </style>
 </head>
-<body onmousedown="handleTouch(event)" ontouchstart="handleTouch(event)">
-
-    <div class="header" onmousedown="event.stopPropagation()">
-        <div>
-            <div class="money-val">🪙 <span id="money">0</span></div>
-            <div style="font-size:0.75rem; color:#94a3b8;">🌟 จุติ: <span id="r-pts">0</span> | บอส Lv. <span id="blv">1</span></div>
-        </div>
-        <button onclick="resetGame()" style="background:none; border:1px solid #334155; color:#475569; font-size:0.6rem; border-radius:5px; padding:4px;">ลบเซฟ</button>
+<body onclick="hit(event)">
+    <div class="header">
+        <div class="money">🪙 <span id="m">0</span></div>
+        <div style="font-size:0.8rem;color:#94a3b8">🌟 จุติ: <span id="rp">0</span> | Lv.<span id="lv">1</span></div>
     </div>
-
     <div class="boss-area">
-        <div id="boss" class="boss-icon">👹</div>
-        <div class="hp-container">
-            <div id="hp-bar" class="hp-bar"></div>
-            <div id="hp-text" class="hp-text">HP: 100 / 100</div>
-        </div>
+        <div class="boss-icon">👹</div>
+        <div class="hp-box"><div id="hpb" class="hp-bar"></div></div>
+        <div id="hpt" style="font-size:0.7rem;margin-top:5px">HP: 100/100</div>
     </div>
-
-    <div class="menu-container" onmousedown="event.stopPropagation()">
+    <div class="menu-container" onclick="event.stopPropagation()">
         <div class="tabs">
-            <div class="tab active" onclick="openTab(this, 'atk-tab')">⚔️ พลัง</div>
-            <div class="tab" onclick="openTab(this, 'gold-tab')">💰 เงิน</div>
-            <div class="tab" onclick="openTab(this, 'rb-tab')">🌀 จุติ</div>
-            <div class="tab" onclick="openTab(this, 'info-tab')">ℹ️ วิธีเล่น</div>
+            <div class="tab active" onclick="tab(this,'atk')">⚔️ พลัง</div>
+            <div class="tab" onclick="tab(this,'gold')">💰 เงิน</div>
+            <div class="tab" onclick="tab(this,'rb')">🌀 จุติ</div>
         </div>
-
-        <div id="atk-tab" class="content-list active">
-            <div class="card"><div class="card-info"><b>ดาบไม้</b><span>Atk +15</span></div><button class="btn-buy" onclick="buy('atk', 15, 50)">50</button></div>
-            <div class="card"><div class="card-info"><b>ดาบเหล็ก</b><span>Atk +100</span></div><button class="btn-buy" onclick="buy('atk', 100, 2000)">2,000</button></div>
-            <div class="card"><div class="card-info"><b>ดาบเงิน</b><span>Atk +500</span></div><button class="btn-buy" onclick="buy('atk', 500, 10000)">10,000</button></div>
-            <div class="card"><div class="card-info"><b>ดาบทอง</b><span>Atk +2,500</span></div><button class="btn-buy" onclick="buy('atk', 2500, 50000)">50,000</button></div>
-            <div class="card"><div class="card-info"><b>ดาบปีศาจ</b><span>Atk +10,000</span></div><button class="btn-buy" onclick="buy('atk', 10000, 250000)">250,000</button></div>
+        <div id="atk" class="list active">
+            <div class="card"><div><b>ดาบไม้</b><br><small>Atk +15</small></div><button class="btn-gold" onclick="buy('a',15,50)">50</button></div>
+            <div class="card"><div><b>ดาบเหล็ก</b><br><small>Atk +100</small></div><button class="btn-gold" onclick="buy('a',100,2000)">2,000</button></div>
         </div>
-
-        <div id="gold-tab" class="content-list">
-            <div class="card"><div class="card-info"><b>กระเป๋าผ้า</b><span>เงิน x1.2</span></div><button class="btn-buy" onclick="buy('gold', 0.2, 100)">100</button></div>
-            <div class="card"><div class="card-info"><b>เหรียญโชคดี</b><span>เงิน x1.5</span></div><button class="btn-buy" onclick="buy('gold', 0.5, 5000)">5,000</button></div>
-            <div class="card"><div class="card-info"><b>ตู้เซฟทอง</b><span>เงิน x2.0</span></div><button class="btn-buy" onclick="buy('gold', 1.0, 25000)">25,000</button></div>
-            <div class="card"><div class="card-info"><b>ธนาคารส่วนตัว</b><span>เงิน x5.0</span></div><button class="btn-buy" onclick="buy('gold', 4.0, 500000)">500,000</button></div>
+        <div id="gold" class="list">
+            <div class="card"><div><b>กระเป๋าผ้า</b><br><small>เงิน x1.2</small></div><button class="btn-gold" onclick="buy('g',0.2,100)">100</button></div>
         </div>
-
-        <div id="rb-tab" class="content-list rb-panel">
-            <h2 style="color:#38bdf8;">🌀 ระบบจุติใหม่</h2>
-            <p style="color:#94a3b8; font-size:0.9rem;">เมื่อจุติ: เงินและอัปเกรดจะหายไป <br>แต่คุณจะได้รับ **พลังโจมตี x2** ถาวร!</p>
-            <div style="margin:20px 0; padding:15px; background:#0b0f19; border-radius:10px;">
-                <span style="color:#94a3b8;">เงื่อนไข:</span> <b style="color:#fbbf24;">100,000 🪙</b>
-            </div>
-            <button id="rb-btn" class="btn-rb" onclick="doRebirth()">จุติ!</button>
-        </div>
-
-        <div id="info-tab" class="content-list">
-            <div class="info-box">
-                <h3 style="margin-top:0; color:#fbbf24;">🎮 วิธีเล่น</h3>
-                <p>1. จิ้มที่ตัวบอสเพื่อโจมตีและเก็บเงิน<br>
-                   2. นำเงินไปซื้ออาวุธในแท็บ "พลัง" เพื่อให้ตีแรงขึ้น<br>
-                   3. อัปเกรดแท็บ "เงิน" เพื่อรับโบนัสเงินต่อการฆ่าบอส<br>
-                   4. เมื่อมีเงินถึง 100,000 ให้กด "จุติ" เพื่อรับพลังคูณสอง!</p>
-                <hr style="border:0; border-top:1px solid #334155; margin:15px 0;">
-                <p><b>📱 ติดต่อผู้พัฒนา</b><br>
-                   กัปตัน (Captain)<br>
-                   <a href="https://github.com/supanat254135-ctrl" style="color:#38bdf8; text-decoration:none;">GitHub ของฉัน</a></p>
-            </div>
+        <div id="rb" class="list" style="text-align:center">
+            <h3>🌀 จุติใหม่</h3>
+            <button class="btn-long" id="rbb" onclick="rebirth()">จุติ!</button>
         </div>
     </div>
-
 <script>
-    const hitSfx = new Audio('https://www.soundjay.com/buttons/sounds/button-37.mp3');
-    const buySfx = new Audio('https://www.soundjay.com/buttons/sounds/button-09.mp3');
-    hitSfx.volume = 0.1; buySfx.volume = 0.1; // เสียงเบาลง 90%
-
-    let money=0, atk=10, goldMult=1, rPoints=0, bossLv=1, maxHP=100, currentHP=100;
-
-    function save() {
-        localStorage.setItem('captain_game_v3', JSON.stringify({money, atk, goldMult, rPoints, bossLv}));
+    let m=0, atk=10, g=1, rp=0, lv=1, hp=100, mhp=100;
+    const save=()=>localStorage.setItem('cap_v', JSON.stringify({m,atk,g,rp,lv}));
+    function hit(e){
+        let d=atk*Math.pow(2,rp); hp-=d;
+        let p=document.createElement('div'); p.className='dmg'; p.innerText=d; p.style.left=e.clientX+'px'; p.style.top=e.clientY+'px'; document.body.appendChild(p); setTimeout(()=>p.remove(),500);
+        if(hp<=0){ m+=(lv*50)*g*Math.pow(2,rp); lv++; mhp=lv*150; hp=mhp; save(); }
+        up();
     }
-
-    function load() {
-        const saved = localStorage.getItem('captain_game_v3');
-        if(saved) {
-            const d = JSON.parse(saved);
-            money=d.money; atk=d.atk; goldMult=d.goldMult; rPoints=d.rPoints; bossLv=d.bossLv;
-            maxHP = bossLv * 150; currentHP = maxHP;
-        }
-        updateUI();
+    function buy(t,v,c){ if(m>=c){ m-=c; if(t==='a')atk+=v; else g+=v; save(); up(); } }
+    function rebirth(){ if(m>=100000){ rp++; m=0; atk=10; g=1; lv=1; hp=100; mhp=100; save(); up(); } }
+    function tab(el,id){
+        document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+        document.querySelectorAll('.list').forEach(l=>l.classList.remove('active'));
+        el.classList.add('active'); document.getElementById(id).classList.add('active');
     }
-
-    function handleTouch(e) {
-        if(e.target.closest('.header') || e.target.closest('.menu-container')) return;
-        const touch = e.changedTouches ? e.changedTouches[0] : e;
-        attack(touch.clientX, touch.clientY);
+    function up(){
+        document.getElementById('m').innerText=Math.floor(m).toLocaleString();
+        document.getElementById('rp').innerText=rp; document.getElementById('lv').innerText=lv;
+        document.getElementById('hpb').style.width=(hp/mhp*100)+'%';
+        document.getElementById('hpt').innerText=`HP: ${Math.floor(hp)} / ${mhp}`;
+        document.getElementById('rbb').disabled = m < 100000;
     }
-
-    function attack(x, y) {
-        hitSfx.currentTime = 0; hitSfx.play();
-        const power = atk * Math.pow(2, rPoints);
-        currentHP -= power;
-        
-        // Popup Damage
-        const d = document.createElement('div');
-        d.className = 'dmg-popup'; d.innerText = Math.floor(power).toLocaleString();
-        d.style.left = x + 'px'; d.style.top = y + 'px';
-        document.body.appendChild(d);
-        setTimeout(() => d.remove(), 500);
-
-        // Boss Death
-        if(currentHP <= 0) {
-            money += (bossLv * 50) * goldMult * Math.pow(2, rPoints);
-            bossLv++;
-            maxHP = bossLv * 150;
-            currentHP = maxHP;
-            save();
-        }
-        updateUI();
-    }
-
-    function buy(type, val, cost) {
-        if(money >= cost) {
-            buySfx.play();
-            money -= cost;
-            if(type === 'atk') atk += val;
-            if(type === 'gold') goldMult += val;
-            save(); updateUI();
-        }
-    }
-
-    function doRebirth() {
-        if(money >= 100000) {
-            rPoints++; money=0; atk=10; goldMult=1; bossLv=1; maxHP=100; currentHP=100;
-            save(); updateUI();
-            alert("✨ จุติสำเร็จ! พลังโจมตีของคุณเพิ่มขึ้นเป็น x" + Math.pow(2, rPoints));
-        }
-    }
-
-    function openTab(el, id) {
-        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-        document.querySelectorAll('.content-list').forEach(c => c.classList.remove('active'));
-        el.classList.add('active');
-        document.getElementById(id).classList.add('active');
-    }
-
-    function updateUI() {
-        document.getElementById('money').innerText = Math.floor(money).toLocaleString();
-        document.getElementById('r-pts').innerText = rPoints;
-        document.getElementById('blv').innerText = bossLv;
-        document.getElementById('hp-bar').style.width = (currentHP / maxHP * 100) + "%";
-        document.getElementById('hp-text').innerText = `HP: ${Math.floor(currentHP).toLocaleString()} / ${maxHP.toLocaleString()}`;
-        
-        const rbBtn = document.getElementById('rb-btn');
-        rbBtn.disabled = money < 100000;
-        rbBtn.innerText = money >= 100000 ? "จุติเลย! (รับพลัง x2)" : "ขาดอีก " + (100000 - Math.floor(money
-    
+    const s=localStorage.getItem('cap_v'); if(s){ const d=JSON.parse(s); m=d.m; atk=d.atk; g=d.g; rp=d.rp; lv=d.lv; mhp=lv*150; hp=mhp; }
+    up();
+</script>
+</body>
+</html>

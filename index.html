@@ -10,78 +10,63 @@
         * { touch-action: manipulation; box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
         body { margin: 0; background: #020617; font-family: 'Kanit', sans-serif; color: #fff; overflow: hidden; user-select: none; width: 100vw; height: 100vh; }
 
-        /* หน้าจอเริ่มเกม */
+        /* หน้าจอเริ่มเกม (เพิ่มช่องใส่ชื่อ) */
         #start-screen { position: fixed; inset: 0; background: rgba(2, 6, 23, 0.98); z-index: 3000; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
-        .start-btn { background: #fbbf24; color: #000; border: none; padding: 15px 40px; font-size: 1.3rem; font-weight: bold; border-radius: 50px; cursor: pointer; box-shadow: 0 5px 0 #b45309; transition: 0.1s; animation: pulse 1.5s infinite; }
+        .name-input { background: #1e293b; border: 2px solid #38bdf8; color: #fff; padding: 12px; border-radius: 15px; font-size: 1.1rem; width: 80%; max-width: 300px; text-align: center; margin-bottom: 20px; font-family: 'Kanit', sans-serif; }
+        .start-btn { background: #fbbf24; color: #000; border: none; padding: 15px 40px; font-size: 1.3rem; font-weight: bold; border-radius: 50px; cursor: pointer; box-shadow: 0 5px 0 #b45309; transition: 0.1s; }
         .start-btn:active { transform: translateY(5px); box-shadow: 0 0 0 #b45309; }
-        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
-
-        /* ส่วนหัว (Header) ซ้าย-ขวา */
-        .header { background: #0f172a; padding: 10px 15px; border-bottom: 2px solid #38bdf8; display: flex; justify-content: space-between; align-items: flex-start; z-index: 50; position: relative; }
-        .info-left { flex: 1; }
-        .money { font-size: 1.8rem; color: #fbbf24; font-weight: bold; line-height: 1.2; }
-        .stats-text { font-size: 0.8rem; color: #94a3b8; margin-top: 2px; }
-        .mult-text { font-size: 0.8rem; color: #38bdf8; font-weight: bold; margin-top: 2px; }
         
-        /* ปุ่มอันดับขวาบน */
-        .btn-rank { background: #f59e0b; color: #000; border: 2px solid #fff; width: 45px; height: 45px; border-radius: 12px; display: flex; justify-content: center; align-items: center; font-size: 1.4rem; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.3); transition: transform 0.2s; }
-        .btn-rank:active { transform: scale(0.9); }
+        /* UI ส่วนหัว */
+        .header { background: #0f172a; padding: 10px 15px; border-bottom: 2px solid #38bdf8; display: flex; justify-content: space-between; align-items: flex-start; z-index: 50; position: relative; }
+        .money { font-size: 1.8rem; color: #fbbf24; font-weight: bold; }
+        .stats-text { font-size: 0.8rem; color: #94a3b8; }
+        .mult-text { font-size: 0.8rem; color: #38bdf8; font-weight: bold; }
+        
+        .btn-rank { background: #f59e0b; color: #000; border: 2px solid #fff; width: 45px; height: 45px; border-radius: 12px; display: flex; justify-content: center; align-items: center; font-size: 1.4rem; cursor: pointer; }
 
-        .combo-box { position: absolute; right: 15px; top: 70px; color: #38bdf8; font-weight: bold; font-size: 1.2rem; text-shadow: 0 0 5px #020617; }
-
-        /* พื้นที่บอส */
-        .boss-area { height: 32vh; display: flex; flex-direction: column; justify-content: center; align-items: center; position: relative; background: radial-gradient(circle, #1e293b 0%, #020617 100%); }
-        .boss-icon { font-size: 6rem; filter: drop-shadow(0 0 15px #f43f5e); will-change: transform; transition: transform 0.05s; }
+        /* บอส */
+        .boss-area { height: 32vh; display: flex; flex-direction: column; justify-content: center; align-items: center; background: radial-gradient(circle, #1e293b 0%, #020617 100%); }
+        .boss-icon { font-size: 6rem; transition: transform 0.05s; }
         .hp-box { width: 85%; height: 14px; background: #300; border: 1px solid #fff; border-radius: 50px; overflow: hidden; margin-top: 10px; }
         .hp-bar { height: 100%; background: #f43f5e; width: 100%; transition: width 0.1s; }
 
-        /* เมนูอัปเกรด */
+        /* เมนู */
         .upgrade-container { height: 55vh; background: #0f172a; border-top: 2px solid #334155; display: flex; flex-direction: column; }
-        .tab-menu { display: flex; background: #1e293b; border-bottom: 1px solid #334155; }
+        .tab-menu { display: flex; background: #1e293b; }
         .tab { flex: 1; padding: 15px; text-align: center; cursor: pointer; color: #94a3b8; font-size: 0.9rem; }
         .tab.active { color: #38bdf8; border-bottom: 3px solid #38bdf8; background: #0f172a; font-weight: bold; }
-
         .upgrade-list { flex-grow: 1; overflow-y: auto; padding: 15px; display: none; padding-bottom: 80px; }
         .upgrade-list.active { display: block; }
+
         .up-card { background: #1e293b; padding: 12px; border-radius: 12px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #334155; }
-        .up-info { flex: 1; }
-        .up-info b { color: #38bdf8; font-size: 1rem; display: block; }
-        .up-info span { font-size: 0.8rem; color: #94a3b8; }
-        .btn-up { background: #fbbf24; color: #000; border: none; padding: 10px; border-radius: 8px; font-weight: bold; cursor: pointer; min-width: 100px; font-size: 0.85rem; transition: 0.1s; }
-        .btn-up:active { transform: scale(0.95); }
-        .btn-up:disabled { background: #444; color: #888; opacity: 0.5; transform: none; }
+        .btn-up { background: #fbbf24; color: #000; border: none; padding: 10px; border-radius: 8px; font-weight: bold; min-width: 100px; }
+        .btn-up:disabled { background: #444; color: #888; opacity: 0.5; }
 
-        /* หน้าต่าง Ranking */
-        #rank-panel { position: fixed; bottom: -100%; left: 0; width: 100%; height: 85%; background: #0f172a; z-index: 2500; border-radius: 25px 25px 0 0; border-top: 4px solid #f59e0b; transition: bottom 0.4s cubic-bezier(0.175, 0.885, 0.32, 1); padding: 20px; display: flex; flex-direction: column; box-shadow: 0 -10px 30px rgba(0,0,0,0.8); }
+        /* Ranking */
+        #rank-panel { position: fixed; bottom: -100%; left: 0; width: 100%; height: 85%; background: #0f172a; z-index: 2500; border-radius: 25px 25px 0 0; border-top: 4px solid #f59e0b; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1); padding: 20px; display: flex; flex-direction: column; }
         #rank-panel.active { bottom: 0; }
-        .rank-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px solid #334155; padding-bottom: 10px; }
-        #rank-list { flex: 1; overflow-y: auto; padding-bottom: 30px; }
-        .rank-item { display: flex; align-items: center; padding: 12px; background: #1e293b; border-radius: 10px; margin-bottom: 8px; }
-        .rank-item.me { border: 2px solid #38bdf8; background: #172554; position: sticky; bottom: 0; box-shadow: 0 -5px 15px rgba(0,0,0,0.5); z-index: 10; }
-        .rank-num { width: 40px; font-weight: bold; color: #f59e0b; }
+        #rank-list { flex: 1; overflow-y: auto; }
+        .rank-item { display: flex; padding: 12px; background: #1e293b; border-radius: 10px; margin-bottom: 8px; }
+        .rank-item.me { border: 2px solid #38bdf8; background: #172554; position: sticky; bottom: 0; }
 
-        /* เอฟเฟกต์ตัวเลขดาเมจ */
-        .dmg-text { position: absolute; font-weight: 900; pointer-events: none; z-index: 100; text-shadow: 2px 2px 0 #000; opacity: 0; }
+        .dmg-text { position: absolute; font-weight: 900; pointer-events: none; z-index: 100; text-shadow: 2px 2px 0 #000; animation: floatOut 0.4s ease-out forwards; }
         @keyframes floatOut { 0% { transform: translate(-50%, -50%) scale(1); opacity: 1; } 100% { transform: translate(-50%, -150%) scale(1.3); opacity: 0; } }
-        
-        /* ป้ายจุติ / ติดต่อ */
-        .rebirth-panel { background: linear-gradient(45deg, #1e293b, #4c1d95); padding: 20px; border-radius: 15px; text-align: center; border: 2px solid #38bdf8; }
-        .contact-link { display: flex; align-items: center; background: #1877f2; padding: 12px; border-radius: 10px; color: #fff; text-decoration: none; margin-top: 10px; font-weight: bold; justify-content: center; }
-        .contact-line { background: #06c755; }
-        .contact-link i { margin-right: 10px; font-size: 1.2rem; }
     </style>
 </head>
 <body onmousedown="handleAction(event)" ontouchstart="handleAction(event)">
 
     <div id="start-screen">
-        <h1 style="color:#fbbf24; margin-bottom: 10px; font-size: 2.5rem; text-shadow: 0 0 10px rgba(251, 191, 36, 0.5);">MONSTER CLICKER</h1>
-        <p style="color:#94a3b8; margin-bottom: 30px;">Captain Edition</p>
+        <h1 style="color:#fbbf24; font-size: 2.2rem; margin-bottom: 10px;">MONSTER CLICKER</h1>
+        <p style="color:#94a3b8; margin-bottom: 20px;">Captain Edition</p>
+        
+        <input type="text" id="player-name-input" class="name-input" placeholder="ใส่ชื่อกัปตันตรงนี้..." maxlength="12">
+        
         <button class="start-btn" onclick="startGame()">▶ เข้าสู่ระบบ</button>
-        <p style="font-size: 0.8rem; margin-top: 20px; color: #475569;">(ระบบจะดึงข้อมูลที่บันทึกไว้ 100%)</p>
+        <p style="font-size: 0.75rem; margin-top: 15px; color: #475569;">(ระบบจะบันทึกข้อมูลและชื่อไว้ 100%)</p>
     </div>
 
     <div class="header" onmousedown="event.stopPropagation()" ontouchstart="event.stopPropagation()">
-        <div class="info-left">
+        <div>
             <div class="money">🪙 <span id="money">0</span></div>
             <div class="stats-text">🌟 จุติ: <span id="r-pts">0</span> | บอส Lv. <span id="blv">1</span></div>
             <div class="mult-text">⚡ พลัง x<span id="mult-pow">1</span> | 💰 เงิน x<span id="mult-gold">1</span></div>
@@ -89,12 +74,12 @@
         <div class="btn-rank" onclick="toggleRank(true)"><i class="fa-solid fa-trophy"></i></div>
     </div>
     
-    <div id="combo-text" class="combo-box"></div>
+    <div id="combo-text" style="position:absolute; right:15px; top:75px; color:#38bdf8; font-weight:bold;"></div>
 
     <div class="boss-area">
         <div id="boss" class="boss-icon">👹</div>
         <div class="hp-box"><div id="hp-bar" class="hp-bar"></div></div>
-        <div id="hp-text" style="font-size:0.75rem; margin-top:5px; font-weight:bold;">HP: 100 / 100</div>
+        <div id="hp-text" style="font-size:0.75rem; margin-top:5px;">HP: 100 / 100</div>
     </div>
 
     <div class="upgrade-container" onmousedown="event.stopPropagation()" ontouchstart="event.stopPropagation()">
@@ -106,207 +91,136 @@
         </div>
 
         <div id="atk-tab" class="upgrade-list active">
-            <div class="up-card"><div class="up-info"><b>คมดาบไม้</b><span>ดาเมจ +15</span></div><button class="btn-up" onclick="buy('atk', 15, 50)">💰 50</button></div>
-            <div class="up-card"><div class="up-info"><b>นัยน์ตาปีศาจ</b><span>คริติคอล +5%</span></div><button class="btn-up" onclick="buy('crit', 5, 200)">💰 200</button></div>
-            <div class="up-card"><div class="up-info"><b>ถุงมือเหล็ก</b><span>ดาเมจกด x2</span></div><button class="btn-up" onclick="buy('tap', 1, 1000)">💰 1,000</button></div>
-            <div class="up-card"><div class="up-info"><b>ดาบคาตานะ</b><span>ดาเมจ +100</span></div><button class="btn-up" onclick="buy('atk', 100, 5000)">💰 5,000</button></div>
-            <div class="up-card"><div class="up-info"><b>ดาบเลเซอร์</b><span>ดาเมจ +500</span></div><button class="btn-up" onclick="buy('atk', 500, 20000)">💰 20,000</button></div>
-            <div class="up-card"><div class="up-info"><b>ดาบมหาเทพ</b><span>ดาเมจ +2,500</span></div><button class="btn-up" onclick="buy('atk', 2500, 75000)">💰 75,000</button></div>
+            <div class="up-card"><div><b>คมดาบไม้</b><br><span>ดาเมจ +15</span></div><button class="btn-up" onclick="buy('atk', 15, 50)">💰 50</button></div>
+            <div class="up-card"><div><b>นัยน์ตาปีศาจ</b><br><span>คริ +5%</span></div><button class="btn-up" onclick="buy('crit', 5, 200)">💰 200</button></div>
+            <div class="up-card"><div><b>ดาบคาตานะ</b><br><span>ดาเมจ +100</span></div><button class="btn-up" onclick="buy('atk', 100, 5000)">💰 5,000</button></div>
+            <div class="up-card"><div><b>ดาบมหาเทพ</b><br><span>ดาเมจ +2,500</span></div><button class="btn-up" onclick="buy('atk', 2500, 75000)">💰 75,000</button></div>
         </div>
 
         <div id="gold-tab" class="upgrade-list">
-            <div class="up-card"><div class="up-info"><b>กระเป๋าผ้า</b><span>เงิน x1.2</span></div><button class="btn-up" onclick="buy('gold', 0.2, 100)">💰 100</button></div>
-            <div class="up-card"><div class="up-info"><b>เหรียญนำโชค</b><span>สุ่มเงิน x5</span></div><button class="btn-up" onclick="buy('jack', 5, 500)">💰 500</button></div>
-            <div class="up-card"><div class="up-info"><b>หีบสมบัติ</b><span>เงิน x2.0</span></div><button class="btn-up" onclick="buy('gold', 1.0, 10000)">💰 10,000</button></div>
-            <div class="up-card"><div class="up-info"><b>ตู้เซฟทองคำ</b><span>เงิน x5.0</span></div><button class="btn-up" onclick="buy('gold', 4.0, 50000)">💰 50,000</button></div>
-            <div class="up-card"><div class="up-info"><b>เหมืองเพชร</b><span>เงิน x10.0</span></div><button class="btn-up" onclick="buy('gold', 9.0, 150000)">💰 150,000</button></div>
+            <div class="up-card"><div><b>กระเป๋าผ้า</b><br><span>เงิน x1.2</span></div><button class="btn-up" onclick="buy('gold', 0.2, 100)">💰 100</button></div>
+            <div class="up-card"><div><b>หีบสมบัติ</b><br><span>เงิน x2.0</span></div><button class="btn-up" onclick="buy('gold', 1.0, 10000)">💰 10,000</button></div>
         </div>
 
         <div id="rb-tab" class="upgrade-list">
-            <div class="rebirth-panel">
+            <div style="text-align:center; padding:20px; background:#1e293b; border-radius:15px; border:2px solid #38bdf8;">
                 <h2 style="margin:0; color:#fbbf24;">🌀 ระบบจุติ</h2>
-                <p style="font-size:0.9rem;">รีเซ็ตเพื่อรับ <b>พลัง x2 ถาวร</b></p>
-                <div id="rb-status" style="margin:15px 0; font-weight:bold; color:#fb7185;">ต้องการเงิน: 100,000</div>
-                <button id="rb-btn" class="btn-up" onclick="doRebirth()" style="width:100%; height:50px; font-size:1.2rem;">จุติใหม่!</button>
+                <p>รีเซ็ตเพื่อรับ พลัง x2 ถาวร</p>
+                <div id="rb-status" style="color:#fb7185; font-weight:bold; margin-bottom:10px;">ต้องการเงิน: 100,000</div>
+                <button id="rb-btn" class="btn-up" style="width:100%; height:45px;" onclick="doRebirth()">จุติใหม่!</button>
             </div>
         </div>
 
         <div id="info-tab" class="upgrade-list">
-            <div style="background:#1e293b; padding:15px; border-radius:12px; font-size:0.85rem;">
-                <b style="color:#fbbf24;">🎮 วิธีเล่น:</b> จิ้มบอสเพื่อเก็บเงินและอัปเกรด ไต่อันดับแซงบอทให้ได้!<br><br>
-                <div style="border-top:1px solid #334155; padding-top:15px;">
-                    <b style="color:#38bdf8;">📞 ติดต่อผู้พัฒนา (คุณกัปตัน):</b>
-                    <a href="https://www.facebook.com/share/1MiZn1nveH/" target="_blank" class="contact-link"><i class="fa-brands fa-facebook"></i> ติดต่อทาง Facebook</a>
-                    <a href="https://line.me/ti/p/7zqNeyBS1t" target="_blank" class="contact-link contact-line"><i class="fa-brands fa-line"></i> ติดต่อทาง LINE</a>
-                </div>
+            <div style="background:#1e293b; padding:15px; border-radius:12px;">
+                <b>ติดต่อกัปตัน:</b>
+                <a href="https://www.facebook.com/share/1MiZn1nveH/" target="_blank" style="display:block; background:#1877f2; color:#fff; text-decoration:none; padding:10px; border-radius:8px; margin-top:10px; text-align:center;">Facebook</a>
             </div>
         </div>
     </div>
 
     <div id="rank-panel" onmousedown="event.stopPropagation()" ontouchstart="event.stopPropagation()">
-        <div class="rank-header">
-            <h2 style="margin:0; color:#f59e0b;">🏆 อันดับผู้กล้าโลก</h2>
-            <div style="background:#334155; padding:5px 12px; border-radius:10px; cursor:pointer;" onclick="toggleRank(false)"><i class="fa-solid fa-xmark" style="font-size:1.2rem;"></i> ปิด</div>
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+            <h2 style="color:#f59e0b;">🏆 อันดับผู้กล้า</h2>
+            <div onclick="toggleRank(false)" style="cursor:pointer; padding:10px;">ปิด</div>
         </div>
-        <p style="margin:0 0 10px 0; font-size:0.8rem; color:#64748b;">บอทจะอัปเลเวล 1% ทุกวันเวลาเที่ยงคืน</p>
         <div id="rank-list"></div>
     </div>
 
 <script>
-    // --- ระบบเสียง ---
-    const hitSfx = new Audio('https://www.soundjay.com/buttons/sounds/button-37.mp3'); hitSfx.volume = 0.15;
-    const buySfx = new Audio('https://www.soundjay.com/buttons/sounds/button-09.mp3'); buySfx.volume = 0.2;
-    const bgm = new Audio('https://www.soundhelix.com/examples/mp3/SoundHelix-Song-10.mp3'); bgm.volume = 0.1; bgm.loop = true;
-
-    // --- ตัวแปรเกม ---
-    let money = 0, atk = 10, crit = 0, goldMult = 1.0, jackpot = 0, tapMult = 1, rPoints = 0;
+    // ตัวแปรสถานะ
+    let pName = "กัปตัน";
+    let money = 0, atk = 10, crit = 0, goldMult = 1.0, tapMult = 1, rPoints = 0;
     let bossLv = 1, maxHP = 100, currentHP = 100, combo = 0, comboTimer;
     let bots = [];
+    
+    const SAVE_KEY = "CaptainClicker_SaveV2";
 
-    // --- ระบบ Save/Load (100% ปลอดภัย) ---
-    const SAVE_KEY = "CaptainGameSaveData";
-    const BOTS_KEY = "CaptainBotsData";
-    const BOT_DATE_KEY = "CaptainBotsLastUpdate";
+    // ฟังก์ชันเริ่มเกม (แก้ไขให้กดติดง่ายขึ้น)
+    function startGame() {
+        const inputName = document.getElementById('player-name-input').value.trim();
+        if (inputName !== "") pName = inputName;
+        
+        // ซ่อนหน้าเริ่มเกม
+        document.getElementById('start-screen').style.display = 'none';
+        
+        // โหลดข้อมูล
+        loadGame();
+        
+        // เริ่มระบบเซฟอัตโนมัติ
+        setInterval(saveGame, 5000);
+    }
 
     function saveGame() {
-        const data = { money, atk, crit, goldMult, jackpot, tapMult, rPoints, bossLv, maxHP, currentHP };
+        const data = { pName, money, atk, crit, goldMult, tapMult, rPoints, bossLv, maxHP, currentHP, bots };
         localStorage.setItem(SAVE_KEY, JSON.stringify(data));
-        localStorage.setItem(BOTS_KEY, JSON.stringify(bots));
     }
 
     function loadGame() {
         const saved = localStorage.getItem(SAVE_KEY);
         if (saved) {
             const d = JSON.parse(saved);
-            money = d.money; atk = d.atk; crit = d.crit; goldMult = d.goldMult; jackpot = d.jackpot;
-            tapMult = d.tapMult; rPoints = d.rPoints; bossLv = d.bossLv; maxHP = d.maxHP; currentHP = d.currentHP;
+            pName = d.pName || "กัปตัน";
+            money = d.money; atk = d.atk; crit = d.crit; 
+            goldMult = d.goldMult; tapMult = d.tapMult; 
+            rPoints = d.rPoints; bossLv = d.bossLv; 
+            maxHP = d.maxHP; currentHP = d.currentHP;
+            bots = d.bots || [];
+            document.getElementById('player-name-input').value = pName;
         }
         initBots();
         updateUI();
     }
 
-    // --- ระบบบอท Ranking ---
-    const botNames = ["เทพซ่า007", "สมชาย_Z", "DarkLord", "InwInw", "น้องหมวย123", "BossHunted", "NinjaX", "Killer_TH", "Ruok", "Kittikorn", "Mook_Za", "Zeno", "Faker_TH", "Chokdee_777", "Alpha_God"];
-    
     function initBots() {
-        let savedBots = localStorage.getItem(BOTS_KEY);
-        let lastUpdate = localStorage.getItem(BOT_DATE_KEY);
-        let today = new Date().toDateString(); // ดูวันที่ปัจจุบัน
-
-        if (savedBots) {
-            bots = JSON.parse(savedBots);
-            // ตรวจสอบเที่ยงคืน (ข้ามวัน) เพื่อบวกเวล 1%
-            if (lastUpdate !== today) {
-                bots.forEach(b => b.lv = Math.floor(b.lv * 1.01));
-                localStorage.setItem(BOT_DATE_KEY, today);
-                saveGame();
-            }
-        } else {
-            // สร้างบอทใหม่ครั้งแรก 99 คน (เวลหมื่นถึงแสน)
-            bots = [];
-            for(let i=1; i<=99; i++) {
-                let name = botNames[Math.floor(Math.random() * botNames.length)] + "_" + (100-i);
-                let lv = 100000 - (i * 900) + Math.floor(Math.random() * 500);
-                bots.push({ name: name, lv: lv });
-            }
-            localStorage.setItem(BOT_DATE_KEY, today);
-            saveGame();
+        if (bots.length > 0) return;
+        const names = ["เทพซ่า", "InwInw", "Killer", "สมชาย_Z", "Ninja", "Dark", "Boss", "Mook", "Zeno", "Faker"];
+        for(let i=1; i<=99; i++) {
+            bots.push({
+                name: names[Math.floor(Math.random()*names.length)] + "_" + i,
+                lv: 100000 - (i * 900)
+            });
         }
     }
-
-    function toggleRank(show) {
-        if(show) {
-            hitSfx.currentTime = 0; hitSfx.play().catch(e=>{});
-            renderRank();
-        }
-        document.getElementById('rank-panel').classList.toggle('active', show);
-    }
-
-    function renderRank() {
-        const list = document.getElementById('rank-list');
-        list.innerHTML = "";
-        let allPlayers = [...bots, { name: "คุณ (กัปตัน)", lv: bossLv, me: true }];
-        
-        // เรียงลำดับตามเลเวล
-        allPlayers.sort((a, b) => b.lv - a.lv);
-        
-        allPlayers.forEach((p, i) => {
-            let div = document.createElement('div');
-            div.className = `rank-item ${p.me ? 'me' : ''}`;
-            div.innerHTML = `<div class="rank-num">#${i+1}</div>
-                             <div style="flex:1; font-weight:${p.me ? 'bold':'normal'};">${p.name}</div>
-                             <div style="color:#38bdf8; font-weight:bold;">Lv.${p.lv.toLocaleString()}</div>`;
-            list.appendChild(div);
-        });
-    }
-
-    // --- เริ่มเกม ---
-    function startGame() {
-        document.getElementById('start-screen').style.display = 'none';
-        bgm.play().catch(e => console.log(e));
-        loadGame();
-        // ออโต้เซฟกันเหนียวทุกๆ 3 วินาที
-        setInterval(saveGame, 3000); 
-    }
-
-    // --- Pool ดาเมจ ---
-    const dmgPool = [];
-    for(let i=0; i<20; i++) {
-        let d = document.createElement('div'); d.className = 'dmg-text';
-        document.body.appendChild(d); dmgPool.push(d);
-    }
-    let poolIdx = 0;
 
     function handleAction(e) {
-        if (e.target.closest('.header') || e.target.closest('.upgrade-container') || e.target.closest('#rank-panel') || document.getElementById('start-screen').style.display !== 'none') return;
-        let touches = e.changedTouches ? Array.from(e.changedTouches) : [e];
-        touches.forEach(t => attack(t.clientX, t.clientY));
+        if (document.getElementById('start-screen').style.display !== 'none') return;
+        if (e.target.closest('.header') || e.target.closest('.upgrade-container') || e.target.closest('#rank-panel')) return;
+        attack(e.clientX || (e.touches ? e.touches[0].clientX : 0), e.clientY || (e.touches ? e.touches[0].clientY : 0));
     }
 
     function attack(x, y) {
-        hitSfx.currentTime = 0; hitSfx.play().catch(e=>{});
         combo++;
         clearTimeout(comboTimer);
         comboTimer = setTimeout(() => { combo = 0; updateUI(); }, 1000);
 
-        let rPower = Math.pow(2, rPoints);
-        let finalDmg = atk * rPower * (1 + (combo * 0.01)) * tapMult;
+        let dmg = atk * Math.pow(2, rPoints) * (1 + (combo * 0.01)) * tapMult;
         let isCrit = Math.random() * 100 < crit;
-        if(isCrit) finalDmg *= 2;
+        if(isCrit) dmg *= 2;
 
-        currentHP -= finalDmg;
-        showDmg(x, y, Math.floor(finalDmg), isCrit);
+        currentHP -= dmg;
+        showDmg(x, y, Math.floor(dmg), isCrit);
         
-        const b = document.getElementById('boss');
-        b.style.transform = 'scale(0.8)';
-        setTimeout(() => b.style.transform = 'scale(1)', 50);
+        document.getElementById('boss').style.transform = 'scale(0.8)';
+        setTimeout(() => document.getElementById('boss').style.transform = 'scale(1)', 50);
 
         if (currentHP <= 0) {
-            let reward = bossLv * 50 * goldMult * rPower;
-            if(Math.random()*100 < jackpot) reward *= 5;
-            money += reward;
+            money += bossLv * 50 * goldMult * Math.pow(2, rPoints);
             bossLv++; maxHP = bossLv * 150; currentHP = maxHP;
-            const icons = ['👹','👾','👽','🐲','🤖','💀','🎃'];
-            b.innerText = icons[bossLv % icons.length];
-            saveGame(); // เซฟทันทีที่บอสตาย
-            
-            // อัปเดตตารางอันดับแบบเรียลไทม์ถ้าเปิดหน้าต่างอยู่
-            if(document.getElementById('rank-panel').classList.contains('active')) {
-                renderRank();
-            }
+            document.getElementById('boss').innerText = ['👹','👾','👽','🤖','💀'][bossLv % 5];
+            saveGame();
         }
         updateUI();
     }
 
     function showDmg(x, y, v, c) {
-        let d = dmgPool[poolIdx];
-        d.innerText = c ? "💥 "+v : v;
+        const d = document.createElement('div');
+        d.className = 'dmg-text';
+        d.innerText = (c ? "💥" : "") + v;
         d.style.color = c ? "#fbbf24" : "#f43f5e";
-        d.style.fontSize = c ? "2.2rem" : "1.6rem";
         d.style.left = x + 'px'; d.style.top = y + 'px';
-        d.style.animation = 'none'; d.offsetHeight;
-        d.style.animation = 'floatOut 0.4s ease-out forwards';
-        poolIdx = (poolIdx + 1) % dmgPool.length;
+        document.body.appendChild(d);
+        setTimeout(() => d.remove(), 400);
     }
 
     function switchTab(el, id) {
@@ -318,29 +232,57 @@
 
     function buy(type, val, cost) {
         if (money >= cost) {
-            buySfx.currentTime = 0; buySfx.play().catch(e=>{});
             money -= cost;
             if(type === 'atk') atk += val;
             if(type === 'crit') crit += val;
-            if(type === 'tap') tapMult += val;
             if(type === 'gold') goldMult += val;
-            if(type === 'jack') jackpot += val;
             updateUI();
-            saveGame(); // เซฟทันทีตอนซื้อ
+            saveGame();
         }
     }
 
     function doRebirth() {
         if (money >= 100000) {
-            rPoints++;
-            money = 0; atk = 10; crit = 0; goldMult = 1.0; jackpot = 0; tapMult = 1; bossLv = 1; 
-            maxHP = 100; currentHP = maxHP;
-            updateUI();
-            saveGame(); // เซฟทันทีที่จุติ
-            alert("✨ จุติสำเร็จ! ตอนนี้พลังคูณทวีคูณถาวรแล้ว!");
-            if(document.getElementById('rank-panel').classList.contains('active')) renderRank();
+            rPoints++; money = 0; bossLv = 1; maxHP = 100; currentHP = 100;
+            updateUI(); saveGame();
+            alert("จุติสำเร็จ!");
         }
     }
 
+    function toggleRank(show) {
+        if(show) {
+            const list = document.getElementById('rank-list');
+            list.innerHTML = "";
+            let all = [...bots, { name: pName + " (คุณ)", lv: bossLv, me: true }];
+            all.sort((a,b) => b.lv - a.lv);
+            all.forEach((p, i) => {
+                list.innerHTML += `<div class="rank-item ${p.me?'me':''}">
+                    <b style="width:40px">#${i+1}</b> <span style="flex:1">${p.name}</span> <b>Lv.${p.lv.toLocaleString()}</b>
+                </div>`;
+            });
+        }
+        document.getElementById('rank-panel').classList.toggle('active', show);
+    }
+
     function updateUI() {
-        document.getElementById('money').innerText = Math.flo
+        document.getElementById('money').innerText = Math.floor(money).toLocaleString();
+        document.getElementById('blv').innerText = bossLv;
+        document.getElementById('r-pts').innerText = rPoints;
+        document.getElementById('mult-pow').innerText = (Math.pow(2, rPoints) * tapMult).toLocaleString();
+        document.getElementById('mult-gold').innerText = goldMult.toFixed(1);
+        document.getElementById('hp-bar').style.width = (currentHP/maxHP*100) + "%";
+        document.getElementById('hp-text').innerText = `HP: ${Math.floor(currentHP).toLocaleString()} / ${maxHP.toLocaleString()}`;
+        document.getElementById('combo-text').innerText = combo > 1 ? `Combo x${combo}` : "";
+        
+        const rbBtn = document.getElementById('rb-btn');
+        if (money >= 100000) {
+            rbBtn.disabled = false;
+            document.getElementById('rb-status').innerText = "ปลดล็อกแล้ว!";
+        } else {
+            rbBtn.disabled = true;
+            document.getElementById('rb-status').innerText = "ขาดอีก: " + (100000 - Math.floor(money)).toLocaleString();
+        }
+    }
+</script>
+</body>
+</html>

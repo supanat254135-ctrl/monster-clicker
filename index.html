@@ -3,241 +3,292 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Monster Clicker - Captain Edition</title>
+    <title>Monster Clicker - Pro Edition</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;700&display=swap" rel="stylesheet">
     <style>
-        * { touch-action: manipulation; box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
-        body { margin: 0; background: #020617; font-family: 'Kanit', sans-serif; color: #fff; overflow: hidden; user-select: none; width: 100vw; height: 100vh; }
+        :root {
+            --primary: #38bdf8;
+            --accent: #fbbf24;
+            --bg: #020617;
+            --card: #0f172a;
+            --danger: #f43f5e;
+        }
 
-        #start-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(2, 6, 23, 0.95); z-index: 999; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
-        .start-btn { background: #fbbf24; color: #000; border: none; padding: 15px 40px; font-size: 1.3rem; font-weight: bold; border-radius: 50px; cursor: pointer; box-shadow: 0 5px 0 #b45309; transition: 0.1s; animation: pulse 1.5s infinite; }
-        
-        .header { background: #0f172a; padding: 10px 15px; border-bottom: 2px solid #38bdf8; display: flex; justify-content: space-between; align-items: center; z-index: 50; }
-        .money { font-size: 1.8rem; color: #fbbf24; font-weight: bold; }
-        
-        .boss-area { height: 30vh; display: flex; flex-direction: column; justify-content: center; align-items: center; background: radial-gradient(circle, #1e293b 0%, #020617 100%); }
-        .boss-icon { font-size: 6rem; filter: drop-shadow(0 0 15px #f43f5e); transition: transform 0.05s; }
-        .hp-box { width: 85%; height: 14px; background: #300; border: 1px solid #fff; border-radius: 50px; overflow: hidden; margin-top: 10px; }
-        .hp-bar { height: 100%; background: #f43f5e; width: 100%; transition: width 0.1s; }
+        * { touch-action: manipulation; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        body { margin: 0; background: var(--bg); font-family: 'Kanit', sans-serif; color: #fff; overflow: hidden; user-select: none; }
 
-        /* ปรับปรุงเมนูให้เลื่อนได้ถ้าจอแคบ */
-        .upgrade-container { height: 60vh; background: #0f172a; border-top: 2px solid #334155; display: flex; flex-direction: column; }
-        .tab-menu { display: flex; background: #1e293b; border-bottom: 1px solid #334155; overflow-x: auto; scrollbar-width: none; }
-        .tab-menu::-webkit-scrollbar { display: none; }
-        .tab { min-width: 80px; flex: 1; padding: 15px 5px; text-align: center; cursor: pointer; color: #94a3b8; font-size: 0.85rem; white-space: nowrap; }
-        .tab.active { color: #38bdf8; border-bottom: 3px solid #38bdf8; background: #0f172a; font-weight: bold; }
+        /* ระบบตั้งชื่อสุดสวย */
+        #name-modal { position: fixed; inset: 0; background: rgba(2, 6, 23, 0.9); z-index: 2000; display: flex; justify-content: center; align-items: center; backdrop-filter: blur(10px); }
+        .name-card { background: var(--card); padding: 30px; border-radius: 24px; border: 2px solid var(--primary); width: 85%; text-align: center; box-shadow: 0 0 30px rgba(56, 189, 248, 0.2); }
+        .name-input { width: 100%; padding: 15px; border-radius: 12px; border: 1px solid #334155; background: #1e293b; color: #fff; font-size: 1.2rem; text-align: center; margin: 20px 0; }
+        .confirm-btn { background: var(--accent); color: #000; border: none; padding: 12px 30px; border-radius: 50px; font-weight: bold; font-size: 1rem; cursor: pointer; }
 
-        .upgrade-list { flex-grow: 1; overflow-y: auto; padding: 15px; display: none; padding-bottom: 80px; }
-        .upgrade-list.active { display: block; }
+        /* ปุ่มจัดลำดับขวาบน */
+        #rank-trigger { position: fixed; top: 15px; right: 15px; z-index: 1000; background: rgba(251, 191, 36, 0.2); border: 1px solid var(--accent); color: var(--accent); width: 45px; height: 45px; border-radius: 12px; display: flex; justify-content: center; align-items: center; font-size: 1.5rem; cursor: pointer; transition: 0.3s; }
+        #rank-trigger:active { transform: scale(0.9); }
 
-        .up-card { background: #1e293b; padding: 12px; border-radius: 12px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #334155; }
-        .btn-up { background: #fbbf24; color: #000; border: none; padding: 10px; border-radius: 8px; font-weight: bold; min-width: 90px; }
-        .btn-up:disabled { background: #444; color: #888; opacity: 0.5; }
+        /* หน้าต่างจัดลำดับแบบสมูท */
+        #rank-panel { position: fixed; bottom: -100%; left: 0; width: 100%; height: 85%; background: var(--card); z-index: 1500; border-radius: 30px 30px 0 0; border-top: 3px solid var(--accent); transition: bottom 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); padding: 20px; overflow-y: auto; }
+        #rank-panel.show { bottom: 0; }
+        .close-rank { text-align: center; margin-bottom: 15px; color: #475569; font-size: 1.5rem; }
 
-        /* Leaderboard Style */
-        .rank-item { display: flex; justify-content: space-between; padding: 12px; background: #1e293b; margin-bottom: 6px; border-radius: 10px; border-left: 4px solid #38bdf8; }
-        .rank-item.top3 { border-left-color: #fbbf24; background: #2d2613; }
-        .rank-item.me { border: 2px solid #fbbf24; background: #334155; }
-        .rank-no { font-weight: bold; color: #38bdf8; margin-right: 10px; }
+        .header { padding: 20px; background: linear-gradient(to bottom, #0f172a, transparent); display: flex; flex-direction: column; gap: 5px; }
+        .money-text { font-size: 2.2rem; color: var(--accent); font-weight: bold; text-shadow: 0 0 10px rgba(251, 191, 36, 0.3); }
 
-        .dmg-text { position: absolute; font-weight: 900; pointer-events: none; z-index: 100; text-shadow: 2px 2px 0 #000; animation: floatOut 0.4s ease-out forwards; }
-        @keyframes floatOut { 0% { transform: translate(-50%, -50%) scale(1); opacity: 1; } 100% { transform: translate(-50%, -150%) scale(1.3); opacity: 0; } }
+        .boss-area { height: 35vh; display: flex; flex-direction: column; justify-content: center; align-items: center; position: relative; }
+        .boss-img { font-size: 6.5rem; filter: drop-shadow(0 0 20px var(--danger)); transition: transform 0.05s; }
+        .hp-container { width: 80%; height: 12px; background: #1e293b; border-radius: 50px; margin-top: 20px; overflow: hidden; border: 1px solid #334155; }
+        .hp-fill { height: 100%; background: linear-gradient(90deg, #f43f5e, #fb7185); width: 100%; transition: width 0.1s; }
+
+        .menu-tabs { display: flex; background: #1e293b; margin: 10px; border-radius: 15px; padding: 5px; }
+        .tab-btn { flex: 1; padding: 12px; text-align: center; font-size: 0.9rem; color: #94a3b8; border-radius: 10px; }
+        .tab-btn.active { background: var(--card); color: var(--primary); font-weight: bold; }
+
+        .content-scroll { height: 45vh; overflow-y: auto; padding: 0 15px 100px; }
+        .upgrade-item { background: var(--card); padding: 15px; border-radius: 18px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #1e293b; }
+        .buy-btn { background: var(--accent); color: #000; border: none; padding: 10px 20px; border-radius: 12px; font-weight: bold; min-width: 80px; }
+        .buy-btn:disabled { background: #334155; color: #64748b; }
+
+        /* Leaderboard Items */
+        .rank-row { display: flex; align-items: center; padding: 15px; background: #1e293b; margin-bottom: 8px; border-radius: 15px; }
+        .rank-row.top-player { background: linear-gradient(90deg, #2d2613, #1e293b); border-left: 4px solid var(--accent); }
+        .rank-row.me { border: 2px solid var(--primary); background: #172554; }
+        .rank-num { width: 35px; font-weight: bold; color: var(--primary); }
+        .rank-name { flex: 1; }
+        .rank-lv { font-weight: bold; color: var(--accent); }
+
+        .dmg-popup { position: absolute; pointer-events: none; font-weight: 900; font-size: 1.8rem; text-shadow: 2px 2px 0 #000; animation: damageFloat 0.6s ease-out forwards; z-index: 100; }
+        @keyframes damageFloat { 0% { transform: translateY(0) scale(1); opacity: 1; } 100% { transform: translateY(-100px) scale(1.2); opacity: 0; } }
     </style>
 </head>
-<body onmousedown="handleAction(event)" ontouchstart="handleAction(event)">
+<body onclick="spawnDamage(event)">
 
-    <div id="start-screen">
-        <h1 style="color:#fbbf24;">MONSTER CLICKER</h1>
-        <p style="color:#94a3b8;">Captain Edition v1.9</p>
-        <button class="start-btn" onclick="startGame()">▶ เริ่มเล่น / โหลดข้อมูล</button>
+    <div id="name-modal" style="display: none;">
+        <div class="name-card">
+            <h2 style="margin:0; color:var(--accent);">ยินดีต้อนรับกัปตัน!</h2>
+            <p style="color:#94a3b8; font-size:0.9rem;">กรุณาระบุชื่อเรียกเพื่อใช้จัดลำดับ</p>
+            <input type="text" id="player-name-input" class="name-input" placeholder="ใส่ชื่อของคุณ..." maxlength="12">
+            <button class="confirm-btn" onclick="saveInitialName()">เริ่มการผจญภัย</button>
+        </div>
+    </div>
+
+    <div id="rank-trigger" onclick="toggleRank(true)">
+        <i class="fa-solid fa-trophy"></i>
+    </div>
+
+    <div id="rank-panel">
+        <div class="close-rank" onclick="toggleRank(false)"><i class="fa-solid fa-chevron-down"></i></div>
+        <h2 style="text-align:center; margin-top:0; color:var(--accent);">🏆 ผู้พิชิตบอสสูงสุด 99 อันดับ</h2>
+        <p style="text-align:center; font-size:0.8rem; color:#64748b; margin-bottom:20px;">*บอทจะพัฒนาเลเวลตัวเองทุกวัน*</p>
+        <div id="rank-list"></div>
     </div>
 
     <div class="header">
-        <div>
-            <div class="money">🪙 <span id="money">0</span></div>
-            <div style="font-size:0.75rem; color:#94a3b8;">🌟 จุติ: <span id="r-pts">0</span> | บอส Lv. <span id="blv">1</span></div>
-        </div>
-        <div id="combo-text" style="color:#38bdf8; font-weight:bold;"></div>
+        <div class="money-text">🪙 <span id="money-val">0</span></div>
+        <div style="color:#94a3b8; font-size:0.85rem;">🌟 จุติ: <span id="rb-val">0</span> | บอสเลเวล: <span id="lv-val">1</span></div>
     </div>
 
     <div class="boss-area">
-        <div id="boss" class="boss-icon">👹</div>
-        <div class="hp-box"><div id="hp-bar" class="hp-bar"></div></div>
-        <div id="hp-text" style="font-size:0.75rem; margin-top:5px;">HP: 100 / 100</div>
+        <div id="boss-sprite" class="boss-img">👹</div>
+        <div class="hp-container"><div id="hp-bar" class="hp-fill"></div></div>
+        <div style="font-size:0.8rem; margin-top:8px; font-weight:300;">HP: <span id="hp-text">100 / 100</span></div>
     </div>
 
-    <div class="upgrade-container" onmousedown="event.stopPropagation()" ontouchstart="event.stopPropagation()">
-        <div class="tab-menu">
-            <div class="tab active" onclick="switchTab(this, 'atk-tab')">⚔️ พลัง</div>
-            <div class="tab" onclick="switchTab(this, 'gold-tab')">💰 เงิน</div>
-            <div class="tab" onclick="switchTab(this, 'rb-tab')">🌀 จุติ</div>
-            <div class="tab" onclick="switchTab(this, 'rank-tab')">🏆 อันดับ</div>
-            <div class="tab" onclick="switchTab(this, 'info-tab')">❓ ข้อมูล</div>
-        </div>
+    <div class="menu-tabs">
+        <div class="tab-btn active" onclick="changeTab(this, 'atk-section')">⚔️ พลัง</div>
+        <div class="tab-btn" onclick="changeTab(this, 'gold-section')">💰 การเงิน</div>
+        <div class="tab-btn" onclick="changeTab(this, 'rb-section')">🌀 จุติ</div>
+    </div>
 
-        <div id="atk-tab" class="upgrade-list active">
-            <div class="up-card"><div><b>คมดาบไม้</b><br><small>ดาเมจ +15</small></div><button class="btn-up" onclick="buy('atk', 15, 50)">💰 50</button></div>
-            <div class="up-card"><div><b>นัยน์ตาปีศาจ</b><br><small>คริ +5%</small></div><button class="btn-up" onclick="buy('crit', 5, 200)">💰 200</button></div>
-            <div class="up-card"><div><b>ดาบคาตานะ</b><br><small>ดาเมจ +100</small></div><button class="btn-up" onclick="buy('atk', 100, 5000)">💰 5,000</button></div>
+    <div class="content-scroll">
+        <div id="atk-section" class="tab-content">
+            <div class="upgrade-item"><div><b>ดาบไม้</b><br><small style="color:var(--primary);">ดาเมจ +15</small></div><button class="buy-btn" onclick="buyItem('atk', 15, 50)">💰 50</button></div>
+            <div class="upgrade-item"><div><b>ดาบเหล็ก</b><br><small style="color:var(--primary);">ดาเมจ +100</small></div><button class="buy-btn" onclick="buyItem('atk', 100, 2000)">💰 2,000</button></div>
+            <div class="upgrade-item"><div><b>ดาบเลเซอร์</b><br><small style="color:var(--primary);">ดาเมจ +1,000</small></div><button class="buy-btn" onclick="buyItem('atk', 1000, 50000)">💰 50,000</button></div>
         </div>
-
-        <div id="gold-tab" class="upgrade-list">
-            <div class="up-card"><div><b>กระเป๋าผ้า</b><br><small>เงิน x1.2</small></div><button class="btn-up" onclick="buy('gold', 0.2, 100)">💰 100</button></div>
-            <div class="up-card"><div><b>หีบสมบัติ</b><br><small>เงิน x2.0</small></div><button class="btn-up" onclick="buy('gold', 1.0, 10000)">💰 10,000</button></div>
+        <div id="gold-section" class="tab-content" style="display:none">
+            <div class="upgrade-item"><div><b>กระเป๋าผ้า</b><br><small style="color:var(--accent);">เงิน x1.2</small></div><button class="buy-btn" onclick="buyItem('gold', 0.2, 100)">💰 100</button></div>
+            <div class="upgrade-item"><div><b>เหมืองทอง</b><br><small style="color:var(--accent);">เงิน x2.0</small></div><button class="buy-btn" onclick="buyItem('gold', 1.0, 15000)">💰 15,000</button></div>
         </div>
-
-        <div id="rb-tab" class="upgrade-list">
-            <div style="background:linear-gradient(45deg, #1e293b, #4c1d95); padding:20px; border-radius:15px; text-align:center;">
-                <h2>🌀 ระบบจุติ</h2>
-                <p id="rb-status" style="color:#fb7185;">ต้องการเงิน: 100,000</p>
-                <button id="rb-btn" class="btn-up" onclick="doRebirth()" style="width:100%; height:50px;">จุติใหม่ (พลัง x2)</button>
-            </div>
-        </div>
-
-        <div id="rank-tab" class="upgrade-list">
-            <h3 style="color:#fbbf24; text-align:center;">🏆 อันดับผู้กล้า 1-99</h3>
-            <div id="leaderboard-list">
-                </div>
-        </div>
-
-        <div id="info-tab" class="upgrade-list">
-            <div style="background:#1e293b; padding:15px; border-radius:12px;">
-                <b>ผู้พัฒนา:</b> คุณกัปตัน<br>
-                <b>เวอร์ชัน:</b> 1.9.0 (มีระบบเซฟ + อันดับ)
+        <div id="rb-section" class="tab-content" style="display:none">
+            <div style="background:var(--card); padding:20px; border-radius:20px; text-align:center; border:1px solid var(--primary);">
+                <h3>🌀 ระบบจุติใหม่</h3>
+                <p id="rb-hint" style="color:var(--danger);">ต้องการเงิน: 100,000</p>
+                <button id="rb-action-btn" class="buy-btn" style="width:100%; height:50px;" onclick="executeRebirth()">จุติเพื่อรับพลัง x2</button>
             </div>
         </div>
     </div>
 
 <script>
-    const SAVE_KEY = "MonsterClicker_Captain_Data";
-    let money = 0, atk = 10, crit = 0, goldMult = 1.0, rPoints = 0, bossLv = 1;
-    let maxHP = 100, currentHP = 100, combo = 0, comboTimer, playerName = "Captain";
-    let leaderboard = [];
+    let stats = {
+        money: 0, atk: 10, goldMult: 1.0, bossLv: 1, rbPoints: 0,
+        currentHP: 100, maxHP: 100, playerName: "", startDate: Date.now()
+    };
+    let bots = [];
 
-    // --- ระบบเซฟและโหลด ---
-    function saveGame() {
-        updateLeaderboard();
-        const data = { money, atk, crit, goldMult, rPoints, bossLv, playerName, leaderboard };
-        localStorage.setItem(SAVE_KEY, JSON.stringify(data));
-    }
-
-    function loadGame() {
-        const saved = localStorage.getItem(SAVE_KEY);
-        if (saved) {
-            const d = JSON.parse(saved);
-            money = d.money; atk = d.atk; crit = d.crit; goldMult = d.goldMult;
-            rPoints = d.rPoints; bossLv = d.bossLv; playerName = d.playerName;
-            leaderboard = d.leaderboard || [];
-            maxHP = bossLv * 150; currentHP = maxHP;
+    // --- ระบบจัดการชื่อและบอท ---
+    window.onload = () => {
+        const saved = localStorage.getItem("CaptainClickerSave");
+        if(saved) {
+            stats = JSON.parse(saved);
+            updateUI();
         } else {
-            playerName = prompt("ขอชื่อกัปตันหน่อยครับ:", "Captain") || "Captain";
-            generateBots();
+            document.getElementById('name-modal').style.display = 'flex';
         }
+        initBots();
+        setInterval(saveData, 10000);
+    };
+
+    function saveInitialName() {
+        const input = document.getElementById('player-name-input').value;
+        if(input.trim().length < 2) return alert("กรุณาใส่ชื่ออย่างน้อย 2 ตัวอักษร");
+        stats.playerName = input;
+        stats.startDate = Date.now();
+        document.getElementById('name-modal').style.display = 'none';
+        saveData();
         updateUI();
-        renderRank();
     }
 
-    // สร้างบอทคู่แข่ง 98 คน
-    function generateBots() {
-        const names = ["เทพซ่า", "Shadow", "InwZa", "Dark", "Killer", "Boss", "ProPlayer", "Zero", "Mighty"];
-        leaderboard = [];
+    function initBots() {
+        const names = ["KillerX", "Shadow", "InwZa", "BossGod", "DarkSoul", "Mighty", "Zero", "Pro99", "Lucky"];
+        // สร้างบอท 98 ตัว
         for(let i=1; i<=98; i++) {
-            leaderboard.push({ name: names[i%names.length] + i, lv: Math.floor(Math.random()*50) });
+            bots.push({
+                name: names[Math.floor(Math.random()*names.length)] + "_" + (100 + i),
+                baseLv: Math.floor(Math.random() * 20) + 1
+            });
         }
-        saveGame();
     }
 
-    function updateLeaderboard() {
-        leaderboard = leaderboard.filter(i => i.name !== playerName);
-        leaderboard.push({ name: playerName, lv: bossLv, me: true });
-        leaderboard.sort((a,b) => b.lv - a.lv);
-        leaderboard = leaderboard.slice(0, 99);
+    // คำนวณเลเวลบอทที่เพิ่มขึ้นตามวัน (โหดขึ้นทุกวัน)
+    function getBotCurrentLv(baseLv) {
+        const daysPassed = Math.floor((Date.now() - stats.startDate) / (1000 * 60 * 60 * 24));
+        const growth = daysPassed * 5; // บอทเก่งขึ้นวันละ 5 เลเวล
+        return baseLv + growth;
     }
 
-    function renderRank() {
-        const list = document.getElementById('leaderboard-list');
-        list.innerHTML = "";
-        leaderboard.forEach((item, index) => {
-            const div = document.createElement('div');
-            div.className = `rank-item ${index < 3 ? 'top3' : ''} ${item.me ? 'me' : ''}`;
-            div.innerHTML = `<span class="rank-no">#${index+1}</span> <span>${item.name}</span> <span style="margin-left:auto">Lv. ${item.lv}</span>`;
-            list.appendChild(div);
+    function toggleRank(show) {
+        const panel = document.getElementById('rank-panel');
+        if(show) {
+            updateRankList();
+            panel.classList.add('show');
+        } else {
+            panel.classList.remove('show');
+        }
+    }
+
+    function updateRankList() {
+        const listDiv = document.getElementById('rank-list');
+        listDiv.innerHTML = "";
+        
+        let allPlayers = bots.map(b => ({ name: b.name, lv: getBotCurrentLv(b.baseLv), me: false }));
+        allPlayers.push({ name: stats.playerName, lv: stats.bossLv, me: true });
+        
+        allPlayers.sort((a,b) => b.lv - a.lv);
+        allPlayers = allPlayers.slice(0, 99);
+
+        allPlayers.forEach((p, i) => {
+            const row = document.createElement('div');
+            row.className = `rank-row ${i < 3 ? 'top-player' : ''} ${p.me ? 'me' : ''}`;
+            row.innerHTML = `
+                <div class="rank-num">#${i+1}</div>
+                <div class="rank-name">${p.name} ${p.me ? '<small>(คุณ)</small>' : ''}</div>
+                <div class="rank-lv">Lv.${p.lv}</div>
+            `;
+            listDiv.appendChild(row);
         });
     }
 
-    function startGame() {
-        loadGame();
-        document.getElementById('start-screen').style.display = 'none';
-        setInterval(saveGame, 10000); // ออโต้เซฟทุก 10 วิ
-    }
+    // --- ระบบเกมเพลย์ ---
+    function spawnDamage(e) {
+        if(e.target.closest('.header') || e.target.closest('.menu-tabs') || e.target.closest('.content-scroll') || e.target.closest('#rank-trigger')) return;
+        
+        // Damage Calculation
+        let dmg = stats.atk * Math.pow(2, stats.rbPoints);
+        stats.currentHP -= dmg;
 
-    function handleAction(e) {
-        if (e.target.closest('.header') || e.target.closest('.upgrade-container') || document.getElementById('start-screen').style.display !== 'none') return;
-        attack(e.clientX || (e.touches ? e.touches[0].clientX : 0), e.clientY || (e.touches ? e.touches[0].clientY : 0));
-    }
+        // Popup
+        const p = document.createElement('div');
+        p.className = 'dmg-popup';
+        p.innerText = Math.floor(dmg);
+        p.style.left = e.clientX + 'px'; p.style.top = e.clientY + 'px';
+        p.style.color = Math.random() > 0.8 ? 'var(--accent)' : '#fff';
+        document.body.appendChild(p);
+        setTimeout(() => p.remove(), 600);
 
-    function attack(x, y) {
-        combo++;
-        clearTimeout(comboTimer);
-        comboTimer = setTimeout(() => { combo = 0; updateUI(); }, 1000);
+        // Animation
+        const sprite = document.getElementById('boss-sprite');
+        sprite.style.transform = 'scale(0.8)';
+        setTimeout(() => sprite.style.transform = 'scale(1)', 50);
 
-        let dmg = atk * Math.pow(2, rPoints) * (1 + combo * 0.01);
-        if(Math.random()*100 < crit) dmg *= 2;
-        currentHP -= dmg;
-
-        if(currentHP <= 0) {
-            money += bossLv * 50 * goldMult * Math.pow(2, rPoints);
-            bossLv++; maxHP = bossLv * 150; currentHP = maxHP;
-            saveGame();
+        if(stats.currentHP <= 0) {
+            stats.money += stats.bossLv * 50 * stats.goldMult * Math.pow(2, stats.rbPoints);
+            stats.bossLv++;
+            stats.maxHP = stats.bossLv * 200;
+            stats.currentHP = stats.maxHP;
+            const icons = ['👹','👽','👾','🐲','💀','🤖'];
+            sprite.innerText = icons[stats.bossLv % icons.length];
         }
         updateUI();
     }
 
-    function switchTab(el, id) {
-        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-        document.querySelectorAll('.upgrade-list').forEach(l => l.style.display = 'none');
-        el.classList.add('active');
+    function buyItem(type, val, cost) {
+        if(stats.money >= cost) {
+            stats.money -= cost;
+            if(type === 'atk') stats.atk += val;
+            if(type === 'gold') stats.goldMult += val;
+            updateUI();
+            saveData();
+        }
+    }
+
+    function executeRebirth() {
+        if(stats.money >= 100000) {
+            stats.rbPoints++;
+            stats.money = 0; stats.bossLv = 1; stats.atk = 10;
+            stats.maxHP = 100; stats.currentHP = 100;
+            updateUI();
+            saveData();
+            alert("✨ จุติสำเร็จ! พลังทวีคูณขึ้นแล้ว");
+        }
+    }
+
+    function changeTab(btn, id) {
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(c => c.style.display = 'none');
+        btn.classList.add('active');
         document.getElementById(id).style.display = 'block';
-        if(id === 'rank-tab') renderRank();
-    }
-
-    function buy(type, val, cost) {
-        if(money >= cost) {
-            money -= cost;
-            if(type === 'atk') atk += val;
-            if(type === 'crit') crit += val;
-            if(type === 'gold') goldMult += val;
-            updateUI();
-            saveGame();
-        }
-    }
-
-    function doRebirth() {
-        if(money >= 100000) {
-            rPoints++; money = 0; bossLv = 1; atk = 10;
-            maxHP = 100; currentHP = maxHP;
-            updateUI();
-            saveGame();
-            alert("จุติแล้ว! พลังพื้นฐานเพิ่มขึ้น 2 เท่า");
-        }
     }
 
     function updateUI() {
-        document.getElementById('money').innerText = Math.floor(money).toLocaleString();
-        document.getElementById('blv').innerText = bossLv;
-        document.getElementById('r-pts').innerText = rPoints;
-        document.getElementById('hp-bar').style.width = (currentHP/maxHP*100) + "%";
-        document.getElementById('hp-text').innerText = `HP: ${Math.floor(currentHP).toLocaleString()} / ${maxHP.toLocaleString()}`;
+        document.getElementById('money-val').innerText = Math.floor(stats.money).toLocaleString();
+        document.getElementById('lv-val').innerText = stats.bossLv;
+        document.getElementById('rb-val').innerText = stats.rbPoints;
+        document.getElementById('hp-bar').style.width = (stats.currentHP / stats.maxHP * 100) + "%";
+        document.getElementById('hp-text').innerText = `${Math.floor(stats.currentHP).toLocaleString()} / ${stats.maxHP.toLocaleString()}`;
         
-        const rbBtn = document.getElementById('rb-btn');
-        if(money >= 100000) {
+        const rbBtn = document.getElementById('rb-action-btn');
+        if(stats.money >= 100000) {
             rbBtn.disabled = false;
-            document.getElementById('rb-status').innerText = "ปลดล็อกแล้ว!";
+            document.getElementById('rb-hint').innerText = "พร้อมสำหรับการจุติ!";
+            document.getElementById('rb-hint').style.color = "#4ade80";
         } else {
             rbBtn.disabled = true;
-            document.getElementById('rb-status').innerText = "ขาดอีก: " + (100000 - money).toLocaleString();
+            document.getElementById('rb-hint').innerText = "ต้องการเงิน: " + (100000 - stats.money).toLocaleString();
+            document.getElementById('rb-hint').style.color = "var(--danger)";
         }
+
+        document.querySelectorAll('.buy-btn').forEach(b => {
+            if(b.innerText.includes('💰')) {
+                const cost = parseInt(b.innerText.replace('💰 ', '').replace(/,/g, ''));
+                b.disabled = stats.money < cost;
+            }
+        });
+    }
+
+    function saveData() {
+        localStorage.setItem("CaptainClickerSave", JSON.stringify(stats));
     }
 </script>
 </body>

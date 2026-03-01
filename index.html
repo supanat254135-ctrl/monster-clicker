@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Monster Clicker - Captain Edition</title>
+    <title>Monster Clicker - Captain Save & Sound</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;700&display=swap" rel="stylesheet">
     <style>
@@ -13,27 +13,26 @@
         /* หน้าเริ่มเกม */
         #start-screen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(2, 6, 23, 0.95); z-index: 999;
+            background: radial-gradient(circle, #1e293b 0%, #020617 100%); z-index: 999;
             display: flex; flex-direction: column; justify-content: center; align-items: center;
-            text-align: center; padding: 20px;
         }
         .start-btn {
-            background: #38bdf8; color: white; border: none; padding: 20px 40px;
+            background: #38bdf8; color: white; border: none; padding: 20px 50px;
             font-size: 1.5rem; font-weight: bold; border-radius: 50px; cursor: pointer;
-            box-shadow: 0 0 20px rgba(56, 189, 248, 0.5); animation: pulse 1.5s infinite;
+            box-shadow: 0 0 20px rgba(56, 189, 248, 0.4); transition: 0.3s;
         }
-        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
+        .start-btn:active { transform: scale(0.9); }
 
-        /* UI หลัก */
+        /* UI เกม */
         .header { background: #0f172a; padding: 10px 15px; border-bottom: 2px solid #38bdf8; display: flex; justify-content: space-between; align-items: center; }
         .money { font-size: 1.8rem; color: #fbbf24; font-weight: bold; }
-        .boss-area { height: 28vh; display: flex; flex-direction: column; justify-content: center; align-items: center; background: radial-gradient(circle, #1e293b 0%, #020617 100%); }
+        .boss-area { height: 28vh; display: flex; flex-direction: column; justify-content: center; align-items: center; position: relative; }
         .boss-icon { font-size: 5.5rem; filter: drop-shadow(0 0 15px #f43f5e); transition: transform 0.05s; }
         .hp-box { width: 85%; height: 12px; background: #300; border: 1px solid #fff; border-radius: 50px; overflow: hidden; margin-top: 10px; }
         .hp-bar { height: 100%; background: #f43f5e; width: 100%; transition: width 0.1s; }
         .upgrade-container { height: 62vh; background: #0f172a; border-top: 2px solid #334155; display: flex; flex-direction: column; }
         .tab-menu { display: flex; background: #1e293b; border-bottom: 1px solid #334155; }
-        .tab { flex: 1; padding: 15px; text-align: center; color: #94a3b8; font-size: 0.8rem; cursor: pointer; }
+        .tab { flex: 1; padding: 15px; text-align: center; cursor: pointer; color: #94a3b8; font-size: 0.8rem; }
         .tab.active { color: #38bdf8; border-bottom: 3px solid #38bdf8; background: #0f172a; font-weight: bold; }
         .upgrade-list { flex-grow: 1; overflow-y: auto; padding: 15px; display: none; padding-bottom: 80px; }
         .upgrade-list.active { display: block; }
@@ -47,15 +46,15 @@
 <body onmousedown="handleAction(event)" ontouchstart="handleAction(event)">
 
     <div id="start-screen">
-        <h1 style="color: #38bdf8; margin-bottom: 10px;">MONSTER CLICKER</h1>
-        <p style="color: #94a3b8; margin-bottom: 30px;">By Captain</p>
-        <button class="start-btn" onclick="startGame()">▶ เริ่มเล่นเกม</button>
-        <p style="font-size: 0.8rem; margin-top: 20px; color: #475569;">(การกดเริ่มเกมจะเป็นการเปิดเสียงประกอบ)</p>
+        <h1 style="color:#38bdf8; margin-bottom:5px;">MONSTER CLICKER</h1>
+        <p style="color:#94a3b8; margin-bottom:30px;">By Captain</p>
+        <button class="start-btn" onclick="startGame()">▶ กดเพื่อเริ่มเล่น</button>
+        <p style="font-size:0.7rem; color:#475569; margin-top:15px;">ระบบจะบันทึกเกมให้อัตโนมัติ</p>
     </div>
 
     <div class="header" onmousedown="event.stopPropagation()" ontouchstart="event.stopPropagation()">
         <div><div class="money">🪙 <span id="money">0</span></div><div style="font-size:0.7rem; color:#94a3b8;">🌟 จุติ: <span id="r-pts">0</span> | Lv. <span id="blv">1</span></div></div>
-        <div id="combo-text" style="color:#38bdf8; font-weight:bold;"></div>
+        <button onclick="resetGame()" style="background:none; border:1px solid #444; color:#444; font-size:0.6rem; border-radius:5px;">ลบเซฟ</button>
     </div>
 
     <div class="boss-area">
@@ -79,7 +78,7 @@
         </div>
         <div id="rb-tab" class="upgrade-list">
             <div style="text-align:center; padding:20px;">
-                <h3>🌀 จุติใหม่</h3>
+                <p id="rb-status">ต้องการ 100,000</p>
                 <button id="rb-btn" class="btn-up" onclick="doRebirth()" style="width:100%;">จุติ!</button>
             </div>
         </div>
@@ -89,19 +88,34 @@
     // เสียงประกอบ
     const hitSfx = new Audio('https://www.soundjay.com/buttons/sounds/button-37.mp3');
     const buySfx = new Audio('https://www.soundjay.com/buttons/sounds/button-09.mp3');
-    const bgm = new Audio('https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3');
+    const bgm = new Audio('https://www.soundhelix.com/examples/mp3/SoundHelix-Song-10.mp3'); // เสียงเพลินๆ
     bgm.loop = true; bgm.volume = 0.2;
 
-    let canPlaySound = false;
-    let money=0, atk=10, crit=0, goldMult=1, jackpot=0, tapMult=1, rPoints=0, bossLv=1, maxHP=100, currentHP=100, combo=0, comboT;
+    let money=0, atk=10, goldMult=1, rPoints=0, bossLv=1, maxHP=100, currentHP=100;
+
+    // ระบบโหลดเกม
+    function loadGame() {
+        const saved = localStorage.getItem('captain_save');
+        if (saved) {
+            const data = JSON.parse(saved);
+            money = data.money; atk = data.atk; goldMult = data.goldMult;
+            rPoints = data.rPoints; bossLv = data.bossLv;
+            maxHP = bossLv * 150; currentHP = maxHP;
+        }
+        updateUI();
+    }
+
+    // ระบบบันทึกเกม
+    function saveGame() {
+        const data = { money, atk, goldMult, rPoints, bossLv };
+        localStorage.setItem('captain_save', JSON.stringify(data));
+    }
 
     function startGame() {
         document.getElementById('start-screen').style.display = 'none';
-        canPlaySound = true;
-        bgm.play(); // เริ่มเพลงทันทีที่กดปุ่ม
+        bgm.play();
+        loadGame();
     }
-
-    function play(sound) { if(canPlaySound) { sound.currentTime = 0; sound.play(); } }
 
     function handleAction(e){ 
         if(e.target.closest('.header')||e.target.closest('.upgrade-container')||document.getElementById('start-screen').style.display !== 'none') return;
@@ -110,10 +124,12 @@
     }
 
     function attack(x,y){
-        play(hitSfx);
-        combo++; clearTimeout(comboT); comboT=setTimeout(()=>{combo=0;updateUI();},1000);
-        let p=Math.pow(2,rPoints), d=atk*p*(1+combo*0.01)*tapMult; currentHP-=d; showDmg(x,y,Math.floor(d));
-        if(currentHP<=0){ money+=bossLv*50*goldMult*p; bossLv++; maxHP=bossLv*150; currentHP=maxHP; }
+        hitSfx.currentTime = 0; hitSfx.play();
+        let p=Math.pow(2,rPoints), d=atk*p; currentHP-=d; showDmg(x,y,Math.floor(d));
+        if(currentHP<=0){ 
+            money+=bossLv*50*goldMult*p; bossLv++; maxHP=bossLv*150; currentHP=maxHP; 
+            saveGame(); // บันทึกทุกครั้งที่ฆ่าบอสได้
+        }
         updateUI();
     }
 
@@ -122,15 +138,28 @@
         d.style.left=x+'px'; d.style.top=y+'px'; document.body.appendChild(d); setTimeout(()=>d.remove(),400);
     }
 
-    function buy(t,v,c){ if(money>=c){ play(buySfx); money-=c; if(t==='atk')atk+=v; if(t==='gold')goldMult+=v; updateUI(); } }
-    function switchTab(el,id){ document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active')); document.querySelectorAll('.upgrade-list').forEach(l=>l.style.display='none'); el.classList.add('active'); document.getElementById(id).style.display='block'; }
+    function buy(t,v,c){ 
+        if(money>=c){ 
+            buySfx.play(); money-=c; 
+            if(t==='atk')atk+=v; if(t==='gold')goldMult+=v; 
+            updateUI(); saveGame(); 
+        } 
+    }
+
+    function resetGame() { if(confirm("ต้องการลบเซฟเริ่มใหม่ใช่ไหม?")){ localStorage.removeItem('captain_save'); location.reload(); } }
+
+    function switchTab(el,id){ 
+        document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active')); 
+        document.querySelectorAll('.upgrade-list').forEach(l=>l.style.display='none'); 
+        el.classList.add('active'); document.getElementById(id).style.display='block'; 
+    }
+
     function updateUI(){
         document.getElementById('money').innerText=Math.floor(money).toLocaleString();
         document.getElementById('blv').innerText=bossLv; document.getElementById('r-pts').innerText=rPoints;
         document.getElementById('hp-bar').style.width=(currentHP/maxHP*100)+"%";
         document.getElementById('hp-text').innerText=`HP: ${Math.floor(currentHP)} / ${maxHP}`;
     }
-    updateUI();
 </script>
 </body>
 </html>

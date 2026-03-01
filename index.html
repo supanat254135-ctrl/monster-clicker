@@ -7,22 +7,26 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        /* CSS เหมือนเดิมทุกอย่างครับ */
         * { touch-action: manipulation; box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
         body { margin: 0; background: #020617; font-family: 'Kanit', sans-serif; color: #fff; overflow: hidden; user-select: none; width: 100vw; height: 100vh; }
+        
         #start-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(2, 6, 23, 0.98); z-index: 999; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
         .start-btn { background: #fbbf24; color: #000; border: none; padding: 18px 45px; font-size: 1.4rem; font-weight: bold; border-radius: 50px; cursor: pointer; box-shadow: 0 6px 0 #b45309; transition: 0.1s; }
         .start-btn:active { transform: translateY(4px); box-shadow: 0 2px 0 #b45309; }
-        .header { background: #0f172a; padding: 10px 15px; border-bottom: 2px solid #38bdf8; display: flex; justify-content: space-between; align-items: center; position: relative; }
+
+        .header { background: #0f172a; padding: 10px 15px; border-bottom: 2px solid #38bdf8; display: flex; justify-content: space-between; align-items: center; }
         .money { font-size: 1.8rem; color: #fbbf24; font-weight: bold; }
+        
         .boss-area { height: 30vh; display: flex; flex-direction: column; justify-content: center; align-items: center; position: relative; background: radial-gradient(circle, #1e293b 0%, #020617 100%); }
         .boss-icon { font-size: 6rem; filter: drop-shadow(0 0 15px #f43f5e); transition: transform 0.05s; }
         .hp-box { width: 85%; height: 14px; background: #300; border: 1px solid #fff; border-radius: 50px; overflow: hidden; margin-top: 10px; }
         .hp-bar { height: 100%; background: #f43f5e; width: 100%; transition: width 0.1s; }
+
         .upgrade-container { height: 60vh; background: #0f172a; border-top: 2px solid #334155; display: flex; flex-direction: column; }
         .tab-menu { display: flex; background: #1e293b; }
         .tab { flex: 1; padding: 15px; text-align: center; cursor: pointer; color: #94a3b8; font-size: 0.9rem; }
         .tab.active { color: #38bdf8; border-bottom: 3px solid #38bdf8; background: #0f172a; font-weight: bold; }
+        
         .upgrade-list { flex-grow: 1; overflow-y: auto; padding: 15px; display: none; padding-bottom: 80px; }
         .upgrade-list.active { display: block; }
         .up-card { background: #1e293b; padding: 12px; border-radius: 12px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #334155; }
@@ -30,17 +34,17 @@
         .up-info span { font-size: 0.8rem; color: #94a3b8; }
         .btn-up { background: #fbbf24; color: #000; border: none; padding: 10px; border-radius: 8px; font-weight: bold; cursor: pointer; min-width: 90px; }
         .btn-up:disabled { background: #444; color: #888; opacity: 0.5; }
+
         .dmg-text { position: absolute; font-weight: 900; pointer-events: none; z-index: 100; text-shadow: 2px 2px 0 #000; opacity: 0; }
         @keyframes floatOut { 0% { transform: translate(-50%, -50%) scale(1); opacity: 1; } 100% { transform: translate(-50%, -150%) scale(1.3); opacity: 0; } }
-        .btn-danger { background: #ef4444; color: #fff; border: none; padding: 12px; border-radius: 10px; width: 100%; margin-top: 20px; font-weight: bold; }
     </style>
 </head>
 <body>
 
     <div id="start-screen">
         <h1 style="color:#fbbf24;">MONSTER CLICKER</h1>
-        <p style="color:#94a3b8;">Captain Edition v2.1</p>
-        <button class="start-btn" onclick="startGame()">▶ โหลดเซฟและเริ่มเล่น</button>
+        <p style="color:#94a3b8;">Captain Edition v2.2</p>
+        <button class="start-btn" onclick="startGame()">▶ เข้าสู่การผจญภัย</button>
     </div>
 
     <div class="header">
@@ -48,7 +52,6 @@
             <div class="money">🪙 <span id="money">0</span></div>
             <div style="font-size:0.75rem; color:#94a3b8;">🌟 จุติ: <span id="r-pts">0</span> | บอส Lv. <span id="blv">1</span></div>
         </div>
-        <div id="combo-text" style="color:#38bdf8; font-weight:bold;"></div>
     </div>
 
     <div class="boss-area" onmousedown="handleAction(event)" ontouchstart="handleAction(event)">
@@ -62,7 +65,6 @@
             <div class="tab active" onclick="switchTab(this, 'atk-tab')">⚔️ พลัง</div>
             <div class="tab" onclick="switchTab(this, 'gold-tab')">💰 เงิน</div>
             <div class="tab" onclick="switchTab(this, 'rb-tab')">🌀 จุติ</div>
-            <div class="tab" onclick="switchTab(this, 'info-tab')">❓ ข้อมูล</div>
         </div>
 
         <div id="atk-tab" class="upgrade-list active">
@@ -82,23 +84,16 @@
                 <button id="rb-btn" class="btn-up" onclick="doRebirth()" style="width:100%; height:50px;">จุติใหม่!</button>
             </div>
         </div>
-
-        <div id="info-tab" class="upgrade-list">
-            <button class="btn-danger" onclick="resetSave()">🗑️ ล้างข้อมูลเริ่มใหม่</button>
-        </div>
     </div>
 
 <script>
-    // --- ตัวแปรหลัก ---
-    let g = { money: 0, atk: 10, crit: 0, goldMult: 1.0, jackpot: 0, tapMult: 1, rPoints: 0, bossLv: 1, maxHP: 100, currentHP: 100 };
-    const SAVE_KEY = 'captain_monster_final_v2.1';
+    let g = { money: 0, atk: 10, crit: 0, goldMult: 1.0, tapMult: 1, rPoints: 0, bossLv: 1, maxHP: 100, currentHP: 100 };
+    const SAVE_KEY = 'captain_monster_v2.2';
 
-    // --- ระบบเสียง ---
+    // เสียง
     const hitSfx = new Audio('https://www.soundjay.com/buttons/sounds/button-37.mp3');
-    const bgm = new Audio('https://www.soundhelix.com/examples/mp3/SoundHelix-Song-10.mp3');
-    hitSfx.volume = 0.2; bgm.volume = 0.1; bgm.loop = true;
+    hitSfx.volume = 0.2;
 
-    // --- ฟังก์ชันบันทึก/โหลด ---
     function save() {
         localStorage.setItem(SAVE_KEY, JSON.stringify(g));
     }
@@ -107,24 +102,17 @@
         const data = localStorage.getItem(SAVE_KEY);
         if (data) {
             g = JSON.parse(data);
-            updateUI(); // อัปเดตตัวเลขบนหน้าจอทันทีหลังจากอ่านเซฟ
-            return true;
+            updateUI();
         }
-        return false;
     }
 
-    // --- เริ่มต้นเกม ---
-    window.onload = () => {
-        load(); // โหลดข้อมูลทันทีที่เปิดหน้าเว็บ
-    };
+    window.onload = load;
 
     function startGame() {
         document.getElementById('start-screen').style.display = 'none';
-        bgm.play().catch(()=>{});
-        setInterval(save, 5000); // ออโต้เซฟทุก 5 วินาที
+        setInterval(save, 5000);
     }
 
-    // --- ระบบการเล่น ---
     function attack(x, y) {
         hitSfx.currentTime = 0; hitSfx.play().catch(()=>{});
         let rPower = Math.pow(2, g.rPoints);
@@ -138,7 +126,6 @@
             g.bossLv++; g.maxHP = g.bossLv * 150; g.currentHP = g.maxHP;
         }
         updateUI();
-        save(); // เซฟทุกครั้งที่ตี
     }
 
     function buy(type, val, cost) {
@@ -147,7 +134,7 @@
             if(type === 'atk') g.atk += val;
             if(type === 'gold') g.goldMult += val;
             updateUI();
-            save();
+            save(); // เซฟทันทีที่ซื้อของ
         }
     }
 
@@ -155,7 +142,7 @@
         if (g.money >= 100000) {
             g.rPoints++; g.money = 0; g.bossLv = 1; g.maxHP = 100; g.currentHP = 100;
             updateUI(); save();
-            alert("✨ จุติสำเร็จ!");
+            alert("🌀 จุติสำเร็จ! พลังเพิ่มขึ้นมหาศาล!");
         }
     }
 
@@ -166,17 +153,10 @@
         document.getElementById('hp-bar').style.width = (g.currentHP / g.maxHP * 100) + "%";
         document.getElementById('hp-text').innerText = `HP: ${Math.floor(g.currentHP)} / ${g.maxHP}`;
         
-        // เช็กปุ่มอัปเกรด
         document.querySelectorAll('.btn-up').forEach(btn => {
             let costText = btn.innerText.replace('💰 ', '').replace(/,/g, '');
-            if (!isNaN(parseInt(costText))) {
-                btn.disabled = (g.money < parseInt(costText));
-            }
+            if (!isNaN(parseInt(costText))) btn.disabled = (g.money < parseInt(costText));
         });
-    }
-
-    function resetSave() {
-        if(confirm("ล้างเซฟ?")) { localStorage.removeItem(SAVE_KEY); location.reload(); }
     }
 
     function handleAction(e) {

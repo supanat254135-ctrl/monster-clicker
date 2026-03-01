@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Monster Clicker - God Tier Edition</title>
+    <title>Monster Clicker - God Edition</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;700&display=swap" rel="stylesheet">
     <style>
@@ -13,188 +13,180 @@
             --bg: #020617;
             --card: #0f172a;
             --danger: #f43f5e;
-            --gold: #ffd700;
         }
 
         * { touch-action: manipulation; box-sizing: border-box; outline: none; -webkit-tap-highlight-color: transparent; }
         body { margin: 0; background: var(--bg); font-family: 'Kanit', sans-serif; color: #fff; overflow: hidden; user-select: none; }
 
-        /* --- UI ส่วนบน --- */
-        .top-nav { position: fixed; top: 15px; width: 100%; display: flex; justify-content: space-between; padding: 0 15px; z-index: 2000; }
-        .nav-btn { background: var(--card); border: 1px solid #334155; color: #fff; width: 45px; height: 45px; border-radius: 12px; display: flex; justify-content: center; align-items: center; font-size: 1.2rem; cursor: pointer; }
-        .rank-btn { background: var(--accent); color: #000; border: 2px solid #fff; font-size: 1.5rem; }
+        /* --- ปุ่มควบคุมหลัก (มุมบน) --- */
+        .top-controls { position: fixed; top: 15px; left: 0; width: 100%; display: flex; justify-content: space-between; padding: 0 15px; z-index: 2000; }
+        .btn-group { display: flex; gap: 10px; }
+        .ctrl-btn { background: var(--card); border: 1.5px solid #334155; color: #fff; width: 45px; height: 45px; border-radius: 12px; display: flex; justify-content: center; align-items: center; font-size: 1.2rem; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
+        .rank-trigger { background: var(--accent); color: #000; border: 2.5px solid #fff; font-size: 1.6rem; width: 55px; height: 55px; }
 
-        /* --- หน้าจอ Ranking (99 คน) --- */
-        #rank-panel { position: fixed; bottom: -100%; left: 0; width: 100%; height: 90%; background: var(--card); z-index: 2500; border-radius: 30px 30px 0 0; border-top: 4px solid var(--accent); transition: 0.5s; padding: 20px; display: flex; flex-direction: column; }
+        /* --- หน้าต่างอันดับ (99 คนโหด) --- */
+        #rank-panel { position: fixed; bottom: -100%; left: 0; width: 100%; height: 90%; background: var(--card); z-index: 2500; border-radius: 30px 30px 0 0; border-top: 5px solid var(--accent); transition: 0.5s cubic-bezier(0.175, 0.885, 0.32, 1); padding: 20px; display: flex; flex-direction: column; }
         #rank-panel.active { bottom: 0; }
         .rank-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
-        #rank-list { flex: 1; overflow-y: auto; padding-bottom: 40px; }
-        .rank-item { display: flex; align-items: center; padding: 12px 15px; background: #1e293b; border-radius: 15px; margin-bottom: 8px; border-left: 5px solid transparent; }
-        .rank-item.top3 { background: linear-gradient(90deg, #2d2613, #1e293b); border-left-color: var(--gold); }
-        .rank-item.me { border: 2px solid var(--primary); background: #172554; position: sticky; bottom: 0; z-index: 10; box-shadow: 0 -5px 15px rgba(0,0,0,0.5); }
-        .r-num { width: 45px; font-weight: bold; color: var(--accent); }
-        .r-name { flex: 1; }
-        .r-lv { font-weight: bold; color: var(--primary); }
+        #rank-list { flex: 1; overflow-y: auto; padding-bottom: 50px; }
+        .rank-item { display: flex; align-items: center; padding: 15px; background: #1e293b; border-radius: 15px; margin-bottom: 10px; border-left: 6px solid transparent; }
+        .rank-item.top3 { background: linear-gradient(90deg, #2d2613, #1e293b); border-left-color: #ffd700; }
+        .rank-item.me { border: 2.5px solid var(--primary); background: #172554; position: sticky; bottom: 0; z-index: 100; box-shadow: 0 -10px 20px rgba(0,0,0,0.6); }
 
-        /* --- หน้าจอข้อมูล & ติดต่อ --- */
-        #info-modal { position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 3000; display: none; padding: 30px; }
-        .info-content { background: var(--card); border-radius: 20px; padding: 25px; border: 1px solid var(--primary); max-height: 80vh; overflow-y: auto; }
+        /* --- หน้าต่างวิธีเล่น & ติดต่อ (เห็นชัดๆ) --- */
+        #help-panel { position: fixed; inset: 0; background: rgba(2, 6, 23, 0.98); z-index: 3000; display: none; padding: 25px; align-items: center; justify-content: center; }
+        .help-card { background: var(--card); border: 2px solid var(--primary); border-radius: 25px; padding: 30px; width: 100%; max-width: 400px; }
 
-        /* --- เกมเพลย์หลัก --- */
-        .game-header { padding: 70px 20px 10px; text-align: left; }
+        /* --- สถิติและบอส --- */
+        .header { padding: 80px 20px 10px; }
         .money { font-size: 2.8rem; color: var(--accent); font-weight: bold; }
-        .boss-area { height: 35vh; display: flex; flex-direction: column; justify-content: center; align-items: center; }
-        .boss-img { font-size: 7rem; filter: drop-shadow(0 0 20px var(--danger)); transition: 0.05s; }
-        .hp-container { width: 80%; height: 12px; background: #1e293b; border-radius: 50px; margin-top: 25px; overflow: hidden; }
-        .hp-fill { height: 100%; background: var(--danger); width: 100%; transition: width 0.1s; }
+        .boss-icon { font-size: 7.5rem; filter: drop-shadow(0 0 25px var(--danger)); transition: 0.05s; margin: 20px 0; cursor: pointer; }
+        .hp-bar-bg { width: 85%; height: 14px; background: #1e293b; border-radius: 50px; overflow: hidden; border: 1px solid #334155; }
+        .hp-bar-fill { height: 100%; background: linear-gradient(90deg, #f43f5e, #fb7185); width: 100%; transition: width 0.1s; }
 
-        .tabs { display: flex; background: #1e293b; margin: 15px; border-radius: 15px; padding: 5px; }
-        .tab { flex: 1; padding: 12px; text-align: center; border-radius: 12px; color: #94a3b8; cursor: pointer; }
-        .tab.active { background: var(--card); color: var(--primary); font-weight: bold; }
+        /* --- เมนูอัปเกรด --- */
+        .menu-container { height: 40vh; background: var(--card); border-radius: 35px 35px 0 0; padding: 20px; display: flex; flex-direction: column; box-shadow: 0 -10px 30px rgba(0,0,0,0.5); }
+        .tabs { display: flex; gap: 10px; margin-bottom: 15px; }
+        .tab-btn { flex: 1; padding: 12px; background: #1e293b; border: none; color: #94a3b8; border-radius: 12px; font-weight: bold; }
+        .tab-btn.active { background: var(--primary); color: #000; }
+        .list-area { overflow-y: auto; flex: 1; }
+        .item-card { background: #1e293b; padding: 15px; border-radius: 18px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
+        .buy-btn { background: var(--accent); color: #000; border: none; padding: 10px 18px; border-radius: 10px; font-weight: bold; }
 
-        .up-list { height: 35vh; overflow-y: auto; padding: 0 15px 50px; }
-        .up-card { background: var(--card); padding: 15px; border-radius: 18px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #1e293b; }
-        .buy-btn { background: var(--accent); color: #000; border: none; padding: 10px 20px; border-radius: 12px; font-weight: bold; }
-        .buy-btn:disabled { opacity: 0.3; }
-
-        /* หน้าจอตั้งชื่อ */
+        /* --- หน้าจอเริ่มเกม --- */
         #start-screen { position: fixed; inset: 0; background: var(--bg); z-index: 4000; display: flex; flex-direction: column; justify-content: center; align-items: center; }
-        .name-input { background: #1e293b; border: 2px solid var(--primary); color: #fff; padding: 15px; border-radius: 15px; width: 80%; font-size: 1.2rem; text-align: center; margin-bottom: 20px; }
+        .hero-input { background: #1e293b; border: 2px solid var(--primary); color: #fff; padding: 18px; border-radius: 15px; width: 80%; font-size: 1.3rem; text-align: center; margin-bottom: 25px; }
     </style>
 </head>
-<body onclick="attack(event)">
+<body onclick="handleTap(event)">
 
     <div id="start-screen">
-        <h1 style="color:var(--accent)">MONSTER CLICKER</h1>
-        <input type="text" id="p-name" class="name-input" placeholder="ใส่ชื่อผู้กล้า..." maxlength="12">
-        <button onclick="startGame()" style="background:var(--primary); border:none; padding:15px 40px; border-radius:50px; font-weight:bold; font-size:1.2rem;">เริ่มเกม</button>
+        <h1 style="color:var(--accent); font-size: 2.2rem; margin:0;">MONSTER CLICKER</h1>
+        <p style="color:#64748b; margin-bottom:30px;">ยินดีต้อนรับ กัปตัน!</p>
+        <input type="text" id="p-name" class="hero-input" placeholder="ใส่ชื่อเท่ๆ ของคุณ..." maxlength="12">
+        <button onclick="initGame()" style="background:var(--primary); color:#000; border:none; padding:18px 50px; border-radius:50px; font-weight:bold; font-size:1.2rem; box-shadow: 0 0 20px rgba(56,189,248,0.4);">เข้าสู่สนามรบ</button>
     </div>
 
-    <div class="top-nav">
-        <div class="nav-btn" onclick="toggleInfo(true)"><i class="fa-solid fa-question"></i></div>
-        <div class="nav-btn rank-btn" onclick="toggleRank(true)"><i class="fa-solid fa-trophy"></i></div>
+    <div class="top-controls">
+        <div class="btn-group">
+            <div class="ctrl-btn" onclick="showHelp(true)"><i class="fa-solid fa-book"></i></div>
+            <div class="ctrl-btn" onclick="showHelp(true)"><i class="fa-solid fa-envelope"></i></div>
+        </div>
+        <div class="ctrl-btn rank-trigger" onclick="openRank(true)"><i class="fa-solid fa-trophy"></i></div>
     </div>
 
     <div id="rank-panel">
         <div class="rank-header">
-            <h2 style="margin:0">🏆 Top 99 ผู้กล้าจุติ</h2>
-            <i class="fa-solid fa-xmark" style="font-size:1.5rem;" onclick="toggleRank(false)"></i>
+            <h2 style="margin:0; color:var(--accent);">🏆 THE GODS (TOP 99)</h2>
+            <i class="fa-solid fa-circle-xmark" style="font-size:2rem; color:#475569;" onclick="openRank(false)"></i>
         </div>
-        <p style="color:#64748b; font-size:0.8rem; margin-top:-10px;">บอทระดับเทพ อัปเดตทุก 1 นาที</p>
+        <p style="color:#64748b; font-size:0.85rem; margin-top:-5px;">อัปเดตความโหดทุก 1 นาที</p>
         <div id="rank-list"></div>
     </div>
 
-    <div id="info-modal" onclick="toggleInfo(false)">
-        <div class="info-content" onclick="event.stopPropagation()">
-            <h2 style="color:var(--primary)">📖 วิธีเล่น</h2>
-            <p>1. จิ้มที่ตัวมอนสเตอร์เพื่อสร้างดาเมจ<br>
-               2. เก็บเงินซื้ออาวุธเพื่อเพิ่มพลังโจมตี<br>
-               3. เมื่อถึงเลเวลสูงๆ ให้กด "จุติ" เพื่อรับพลังทวีคูณ<br>
-               4. แข่งอันดับกับผู้กล้าอีก 99 คนในเซิร์ฟเวอร์!</p>
-            <hr border="0" style="border-top:1px solid #334155; margin:20px 0;">
-            <h2 style="color:var(--accent)">📞 ติดต่อกัปตัน</h2>
-            <p>Facebook: Supanat Ctrl<br>
-               Discord: Captain_Elite<br>
-               GitHub: supanat254135-ctrl</p>
-            <button onclick="toggleInfo(false)" style="width:100%; background:var(--danger); color:#fff; border:none; padding:10px; border-radius:10px; margin-top:10px;">ปิดหน้าต่าง</button>
+    <div id="help-panel">
+        <div class="help-card">
+            <h2 style="color:var(--primary); margin-top:0;">📖 วิธีเล่น</h2>
+            <p>• จิ้มมอนสเตอร์เพื่อเก็บเงิน<br>• อัปเกรดอาวุธเพื่อดาเมจที่แรงขึ้น<br>• เมื่อถึง 100,000 ให้กด "จุติ" เพื่อรับพลัง x2</p>
+            <h2 style="color:var(--accent);">📞 ติดต่อกัปตัน</h2>
+            <p>FB: Supanat Ctrl<br>Discord: Captain_Elite<br>GitHub: supanat254135-ctrl</p>
+            <button onclick="showHelp(false)" style="width:100%; background:var(--danger); color:#fff; border:none; padding:15px; border-radius:12px; font-weight:bold; margin-top:10px;">ปิดหน้าต่าง</button>
         </div>
     </div>
 
-    <div class="game-header">
-        <div class="money">🪙 <span id="m-val">0</span></div>
-        <div style="color:#94a3b8">🌟 จุติ: <span id="r-val">0</span> | เลเวล: <span id="l-val">1</span></div>
+    <div class="header">
+        <div class="money">🪙 <span id="gold-val">0</span></div>
+        <div style="color:#94a3b8; font-size:0.9rem;">🌟 จุติ: <span id="rb-val">0</span> | เลเวล: <span id="lv-val">1</span></div>
     </div>
 
     <div class="boss-area">
-        <div id="boss-img" class="boss-img">👹</div>
-        <div class="hp-container"><div id="hp-bar" class="hp-fill"></div></div>
-        <div style="font-size:0.8rem; margin-top:5px; color:#64748b;">HP: <span id="hp-txt">100/100</span></div>
+        <div id="boss-unit" class="boss-icon">👹</div>
+        <div class="hp-bar-bg"><div id="hp-bar-fill" class="hp-bar-fill"></div></div>
+        <div style="font-size:0.8rem; margin-top:8px; color:#64748b;">HP: <span id="hp-txt">100 / 100</span></div>
     </div>
 
-    <div class="tabs">
-        <div class="tab active" onclick="setTab(this, 'atk-sec')">⚔️ พลัง</div>
-        <div class="tab" onclick="setTab(this, 'gold-sec')">💰 เงิน</div>
-        <div class="tab" onclick="setTab(this, 'rb-sec')">🌀 จุติ</div>
-    </div>
-
-    <div class="up-list">
-        <div id="atk-sec">
-            <div class="up-card"><div><b>ดาบคาตานะ</b><br><small>ดาเมจ +15</small></div><button class="buy-btn" onclick="buy('atk', 15, 50)">💰 50</button></div>
-            <div class="up-card"><div><b>คริสตัลมืด</b><br><small>ดาเมจ +100</small></div><button class="buy-btn" onclick="buy('atk', 100, 2000)">💰 2,000</button></div>
+    <div class="menu-container">
+        <div class="tabs">
+            <button class="tab-btn active" onclick="setTab(this, 'atk-list')">⚔️ พลัง</button>
+            <button class="tab-btn" onclick="setTab(this, 'gold-list')">💰 เงิน</button>
+            <button class="tab-btn" onclick="setTab(this, 'rb-list')">🌀 จุติ</button>
         </div>
-        <div id="gold-sec" style="display:none">
-            <div class="up-card"><div><b>ถุงทอง</b><br><small>เงิน x1.2</small></div><button class="buy-btn" onclick="buy('gold', 0.2, 100)">💰 100</button></div>
+        <div id="atk-list" class="list-area">
+            <div class="item-card"><div><b>ดาบคาตานะ</b><br><small>ดาเมจ +25</small></div><button class="buy-btn" onclick="buy('atk', 25, 50)">💰 50</button></div>
+            <div class="item-card"><div><b>เคียวมรณะ</b><br><small>ดาเมจ +150</small></div><button class="buy-btn" onclick="buy('atk', 150, 3000)">💰 3,000</button></div>
         </div>
-        <div id="rb-sec" style="display:none; text-align:center;">
-            <div class="up-card" style="flex-direction:column; gap:10px;">
+        <div id="gold-list" class="list-area" style="display:none">
+            <div class="item-card"><div><b>กระเป๋าเงิน</b><br><small>เงินบอส x1.2</small></div><button class="buy-btn" onclick="buy('gold', 0.2, 100)">💰 100</button></div>
+        </div>
+        <div id="rb-list" class="list-area" style="display:none; text-align:center;">
+            <div class="item-card" style="flex-direction:column; gap:15px; padding:25px;">
                 <b>ต้องใช้เงิน 100,000 เพื่อจุติ</b>
-                <button class="buy-btn" style="width:100%" onclick="rebirth()">🌀 จุติใหม่ (พลัง x2)</button>
+                <button class="buy-btn" style="width:100%; height:50px;" onclick="doRebirth()">🌀 เริ่มต้นใหม่ (ดาเมจ x2)</button>
             </div>
         </div>
     </div>
 
 <script>
-    let stats = { gold: 0, atk: 10, gMult: 1, lv: 1, rb: 0, hp: 100, mhp: 100, name: "" };
+    let stats = { gold: 0, atk: 15, gMult: 1, lv: 1, rb: 0, hp: 100, mhp: 100, name: "" };
     let rivals = [];
 
-    function generateRivals() {
-        const names = ["เทพซ่า_God", "Shadow_X", "InwZa007", "Killer_Pro", "DarkLord", "Somsak_God", "Mina_Kawaii", "Boss_Hunter", "NoobMaster", "Legend_TH"];
+    function generateGods() {
+        const names = ["Zeno_God", "Saitama_TH", "DarkLord_99", "InwZa_Legend", "Killer_No1", "Boss_X", "Mighty_King", "Alpha_Omega", "Ninja_Master", "Captain_Fan"];
         rivals = [];
         for(let i=1; i<=99; i++) {
-            let baseLv = (100 - i) * 500; // อันดับ 1 จะมีเลเวลประมาณ 49,500++
+            // อันดับ 1-10 จะเวลหลักหมื่นหลักแสน
+            let baseLevel = (100 - i) * 800 + Math.floor(Math.random() * 5000); 
+            if(i <= 5) baseLevel += 50000; 
             rivals.push({
-                name: (names[i % names.length]) + "_" + Math.floor(Math.random()*99),
-                lv: baseLv + Math.floor(Math.random()*500)
+                name: names[i % names.length] + "_" + (100 - i),
+                lv: baseLevel
             });
         }
     }
 
-    function updateRivalLvl() {
-        rivals.forEach(r => {
-            if(Math.random() > 0.5) r.lv += Math.floor(Math.random()*10);
-        });
+    function updateRivals() {
+        rivals.forEach(r => { if(Math.random() > 0.4) r.lv += Math.floor(Math.random() * 15); });
         if(document.getElementById('rank-panel').classList.contains('active')) renderRank();
     }
 
     function renderRank() {
         const list = document.getElementById('rank-list');
         list.innerHTML = "";
-        let all = [...rivals, { name: stats.name + " (คุณ)", lv: stats.lv, me: true }];
+        let all = [...rivals, { name: stats.name + " (คุณ)", lv: stats.lv, isMe: true }];
         all.sort((a,b) => b.lv - a.lv);
-
         all.forEach((p, i) => {
             const item = document.createElement('div');
-            item.className = `rank-item ${i < 3 ? 'top3' : ''} ${p.me ? 'me' : ''}`;
-            item.innerHTML = `<div class="r-num">#${i+1}</div><div class="r-name">${p.name}</div><div class="r-lv">Lv.${p.lv.toLocaleString()}</div>`;
+            item.className = `rank-item ${i < 3 ? 'top3' : ''} ${p.isMe ? 'me' : ''}`;
+            item.innerHTML = `<div style="width:40px; font-weight:900; color:var(--accent)">#${i+1}</div>
+                              <div style="flex:1">${p.name}</div>
+                              <div style="color:var(--primary); font-weight:700;">Lv.${p.lv.toLocaleString()}</div>`;
             list.appendChild(item);
         });
     }
 
-    function startGame() {
+    function initGame() {
         const input = document.getElementById('p-name').value;
-        if(input.length < 2) return alert("ชื่อสั้นไปกัปตัน!");
+        if(input.length < 2) return alert("ตั้งชื่อก่อนกัปตัน!");
         stats.name = input;
         document.getElementById('start-screen').style.display = 'none';
-        generateRivals();
-        setInterval(updateRivalLvl, 60000);
+        generateGods();
+        setInterval(updateRivals, 60000);
         updateUI();
     }
 
-    function attack(e) {
-        if(e.target.closest('.up-list') || e.target.closest('.tabs') || e.target.closest('.top-nav')) return;
+    function handleTap(e) {
+        if(e.target.closest('.menu-container') || e.target.closest('.top-controls') || e.target.closest('#help-panel') || e.target.closest('#rank-panel')) return;
         const dmg = stats.atk * Math.pow(2, stats.rb);
         stats.hp -= dmg;
-        
-        const b = document.getElementById('boss-img');
-        b.style.transform = "scale(0.8)";
+        const b = document.getElementById('boss-unit');
+        b.style.transform = "scale(0.85) rotate(5deg)";
         setTimeout(() => b.style.transform = "scale(1)", 50);
-
         if(stats.hp <= 0) {
-            stats.gold += stats.lv * 50 * stats.gMult * Math.pow(2, stats.rb);
+            stats.gold += stats.lv * 60 * stats.gMult * Math.pow(2, stats.rb);
             stats.lv++;
-            stats.mhp = stats.lv * 150;
+            stats.mhp = stats.lv * 200;
             stats.hp = stats.mhp;
-            b.innerText = ['👹','👽','👾','🐲','💀','🤖'][stats.lv % 6];
+            b.innerText = ['👹','👽','👾','🐲','💀','🤖','🎃'][stats.lv % 7];
         }
         updateUI();
     }
@@ -208,40 +200,39 @@
         }
     }
 
-    function rebirth() {
+    function doRebirth() {
         if(stats.gold >= 100000) {
-            stats.rb++; stats.gold = 0; stats.lv = 1; stats.atk = 10;
+            stats.rb++; stats.gold = 0; stats.lv = 1; stats.atk = 15;
             stats.hp = 100; stats.mhp = 100;
-            updateUI(); alert("จุติสำเร็จ!");
+            updateUI(); alert("✨ จุติแล้ว! พลังพื้นฐานเพิ่มขึ้น 2 เท่า");
         }
     }
 
     function setTab(btn, id) {
-        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.tab-btn').forEach(t => t.classList.remove('active'));
         btn.classList.add('active');
-        document.getElementById('atk-sec').style.display = 'none';
-        document.getElementById('gold-sec').style.display = 'none';
-        document.getElementById('rb-sec').style.display = 'none';
+        document.getElementById('atk-list').style.display = 'none';
+        document.getElementById('gold-list').style.display = 'none';
+        document.getElementById('rb-list').style.display = 'none';
         document.getElementById(id).style.display = 'block';
     }
 
-    function toggleRank(show) {
+    function openRank(show) {
         if(show) renderRank();
         document.getElementById('rank-panel').classList.toggle('active', show);
     }
 
-    function toggleInfo(show) {
-        document.getElementById('info-modal').style.display = show ? 'flex' : 'none';
+    function showHelp(show) {
+        document.getElementById('help-panel').style.display = show ? 'flex' : 'none';
     }
 
     function updateUI() {
-        document.getElementById('m-val').innerText = Math.floor(stats.gold).toLocaleString();
-        document.getElementById('l-val').innerText = stats.lv.toLocaleString();
-        document.getElementById('r-val').innerText = stats.rb;
-        document.getElementById('hp-bar').style.width = (stats.hp / stats.mhp * 100) + "%";
-        document.getElementById('hp-txt').innerText = `${Math.floor(stats.hp).toLocaleString()}/${stats.mhp.toLocaleString()}`;
+        document.getElementById('gold-val').innerText = Math.floor(stats.gold).toLocaleString();
+        document.getElementById('lv-val').innerText = stats.lv.toLocaleString();
+        document.getElementById('rb-val').innerText = stats.rb;
+        document.getElementById('hp-bar-fill').style.width = (stats.hp / stats.mhp * 100) + "%";
+        document.getElementById('hp-txt').innerText = `${Math.floor(stats.hp).toLocaleString()} / ${stats.mhp.toLocaleString()}`;
     }
 </script>
 </body>
-    </html>
-    
+</html>
